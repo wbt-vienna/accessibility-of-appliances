@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accessibility of Appliances</title>
+
+    <link rel="stylesheet" href="app/css/skeleton.css">
+    <link rel="stylesheet" href="app/css/normalize.css">
+    <link rel="stylesheet" href="app/css/custom.css">
+    <link rel="stylesheet" href="app/lib/fontawesome-free-5.12.0-web/css/all.min.css">
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1>Accessibility of Appliances</h1>
+        <router-link to="/list">Erfasste Geräte</router-link>
+        <router-link to="/new">Neues Gerät</router-link>
+    </header>
+    <main>
+        <router-view></router-view>
+    </main>
+</div>
+
+<script src="app/build/a11y-for-a8s.bundle.js"></script>
+</body>
+</html>

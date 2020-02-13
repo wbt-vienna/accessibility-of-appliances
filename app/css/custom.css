@@ -1,0 +1,13 @@
+body {
+    margin: 1em;
+}
+
+header * {
+    margin-right: 1em;
+    display: inline-block;
+}
+
+h2 {
+    font-size: 1.7em !important;
+    margin-top: 1em;
+}
