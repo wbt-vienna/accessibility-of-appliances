@@ -22,10 +22,6 @@
         },
         mounted() {
             thiz = this;
-            dataService.saveEntry(new Entry({brand: 'brand', type: 'type', category: 'category'}));
-            dataService.getEntries().then(entries => {
-                log.warn(entries);
-            })
         },
     }
 </script>
