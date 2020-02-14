@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NewView from '../vue-components/newView.vue'
 import ListView from '../vue-components/listView.vue'
+import LoginView from '../vue-components/loginView.vue'
 import * as log from 'loglevel';
 import {databaseService} from "./service/data/databaseService";
 import {localStorageService} from "./service/data/localStorageService";
@@ -12,6 +13,7 @@ function init() {
     let routes = [
         {path: '/new', component: NewView},
         {path: '/list', component: ListView},
+        {path: '/login', component: LoginView},
         {path: '*', redirect: '/list'}
     ];
 

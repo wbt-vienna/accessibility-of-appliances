@@ -19,13 +19,11 @@
 </template>
 
 <script>
-    import TreeItem from "./treeItem.vue"
     import {databaseService} from "../js/service/data/databaseService";
 
     let fromRoute = null;
     let thiz = null;
     export default {
-        components: {TreeItem},
         data() {
             return {
                 password: '',
