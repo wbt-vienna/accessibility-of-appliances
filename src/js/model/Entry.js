@@ -7,10 +7,11 @@ class Entry extends ObjectModel({
     id: [String],
     modelName: [String],
 
-    brand: String,
-    type: String,
-    category: String,
+    product: [Object], //id, label, img
+    category: [Object], //id, label, path
     answers: [ArrayModel(Answer)],
+    score: [Number],
+    scoresByGroup: [Object], // [TargetgroupID -> Number] -> score for a targetgroup
 
     created: [Number],
     updated: [Number]
