@@ -36,6 +36,51 @@ dataService.remove = function(id) {
     return databaseService.removeObject(id);
 };
 
+dataService.getSearchResults = function (query) {
+    return new Promise(resolve => {
+        $.get('https://www.asterics-foundation.org/wbt-proxy/proxy.php', {
+            csurl: 'https://geizhals.at/acses',
+            lang: 'de',
+            loc: 'at',
+            k: query
+        }, function (response) {
+            response = response.split('&amp;').join('&').split('&gt;').join('>').split('<b>').join('').split('</b>').join('');
+            let data = JSON.parse(response.substring(8, response.length - 1));
+            let products = [];
+            let categories = [];
+            data.forEach(d => {
+                if (d[0].indexOf('./?cat') === 0) {
+                    let label = d[1].substring(d[1].lastIndexOf(' > ') + 3)
+                    categories.push({
+                        id: d[0].substring('./?cat='.length),
+                        path: d[1],
+                        label: label
+                    });
+                } else if (d[0].indexOf('./?fs') === 0) {
+                    // other search queries
+                } else if (d[0]) {
+                    // products
+                    products.push({
+                        id: d[0],
+                        label: d[1],
+                        img: d[2]
+                    });
+                }
+            });
+            resolve({
+                categories: categories,
+                products: products
+            });
+        });
+    });
+};
+
+dataService.getCategory = function (productName) {
+    return dataService.getSearchResults(productName).then(result => {
+        return Promise.resolve(result.categories[0])
+    })
+};
+
 function getObject(type, id) {
     if (!id) {
         return Promise.resolve(null);
