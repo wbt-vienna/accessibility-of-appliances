@@ -15,9 +15,10 @@ let _timeoutHandler = null;
  * @return {Promise<void>}
  */
 databaseService.loginReadonly = function () {
-    if (_loggedInUser) {
+    if (_loggedInUser && !databaseService.isLoggedInReadWrite()) {
         return Promise.resolve();
     }
+    localStorageService.savePassword('');
     return login('accessibility-for-appliances-user-readonly', 'plaintext_password');
 };
 
