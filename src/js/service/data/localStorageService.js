@@ -1,5 +1,6 @@
 let localStorageService = {};
 let KEY_PASSWORD = 'AOA_KEY_PASSWORD';
+let KEY_USERNAME = 'AOA_KEY_USERNAME';
 let storage = null;
 
 if (typeof (Storage) !== "undefined") {
@@ -47,6 +48,23 @@ localStorageService.savePassword = function (password) {
 
 localStorageService.getPassword = function () {
     return localStorageService.get(KEY_PASSWORD);
+};
+
+/**
+ * saves the name of the user who created the last entry
+ * @param username
+ * @return {void | undefined}
+ */
+localStorageService.saveUser = function (username) {
+    return localStorageService.save(KEY_USERNAME, username);
+};
+
+/**
+ * gets the name of the user who created the last entry
+ * @return {string | undefined}
+ */
+localStorageService.getUser = function () {
+    return localStorageService.get(KEY_USERNAME) || "";
 };
 
 
