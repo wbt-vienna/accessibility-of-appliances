@@ -2,27 +2,78 @@
     <div>
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
-            <label for="search" class="two columns">Produktsuche</label>
+            <label for="search" class="three columns center">Produktsuche</label>
             <input id="search" type="text" v-model="query" @input="search()" placeholder="Produktname" class="six columns"/>
             <span class="two columns">durch <a href="https://geizhals.at/" target="_blank">geizhals.at</a></span>
         </div>
         <ul style="list-style-type: none">
             <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em">
-                <div class="six columns offset-by-two search-result">
+                <div class="six columns offset-by-three search-result">
                     <img :src="product.img" style="margin-right: 1em"/>
                     <a target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
                 <button @click="select(product)" class="two columns">Wählen</button>
             </li>
         </ul>
-        <div v-if="newEntry">
+        <div v-if="newEntry.product">
             <div class="row">
-                <label for="product" class="two columns">Produkt</label>
+                <label for="product" class="three columns center">Produkt</label>
                 <span id="product" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
             </div>
             <div class="row">
-                <label for="category" class="two columns">Kategorie</label>
+                <label for="category" class="three columns center">Kategorie</label>
                 <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}} ({{newEntry.category.id}})</span>
+            </div>
+            <div v-if="newEntry.category">
+                <div class="row">
+                    <label for="displayTypes" class="three columns">Darbietung wesentlicher Informationen für den Gebrauch</label>
+                    <ul role="group" id="displayTypes" class="eight columns">
+                        <li v-for="displayType in constants.DISPLAY_TYPES">
+                            <input :id="displayType" type="checkbox" v-model="newEntry.questionCategories[displayType]"/>
+                            <label :for="displayType" style="display: inline-block">{{displayType + '_CHK' | translate}}</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <label for="usageTypes" class="three columns">Nutzungsmöglichkeiten des Geräts</label>
+                    <ul role="group" id="usageTypes" class="eight columns">
+                        <li v-for="usageType in constants.USAGE_TYPES">
+                            <input :id="usageType" type="checkbox" v-model="newEntry.questionCategories[usageType]"/>
+                            <label :for="usageType" style="display: inline-block">{{usageType + '_CHK' | translate}}</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
+                    <input type="text" id="updatedBy" class="six columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
+                </div>
+                <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
+                    <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
+                        <h3>{{type | translate}}</h3>
+                        <div class="row" v-for="question in categoryQuestions">
+                            <span class="six columns">{{question.question.de}}</span>
+                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
+                                <option value="" disabled selected hidden>Antwort auswählen</option>
+                                <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
+                                <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="anyTypeSelected">
+                    <h3>{{constants.USAGE_GENERAL | translate}}</h3>
+                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
+                        <span class="six columns">{{question.question.de}}</span>
+                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
+                            <option value="" disabled selected hidden>Antwort auswählen</option>
+                            <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
+                            <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div v-if="anyTypeSelected" class="row" style="margin: 4em 0 3em 0">
+                    <button class="six columns offset-by-three" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
+                </div>
             </div>
         </div>
     </div>
@@ -32,17 +83,40 @@
     import {dataService} from "../js/service/data/dataService";
     import {util} from "../js/util/util";
     import {Entry} from "../js/model/Entry";
-    import {Question} from "../js/model/Question";
-    import {TranslatableText} from "../js/model/TranslatableText";
+    import {constants} from "../js/util/constants";
+    import {Answer} from "../js/model/Answer";
+    import {localStorageService} from "../js/service/data/localStorageService";
 
     let thiz = null;
     export default {
         components: {},
         data() {
             return {
+                questions: null,
                 searchResults: {},
                 newEntry: JSON.parse(JSON.stringify(new Entry())),
-                query: ""
+                query: "",
+                constants: constants
+            }
+        },
+        computed: {
+            categorizedQuestions: function () {
+                if (!this.questions) {
+                    return {};
+                }
+                let map = {};
+                constants.ALL_TYPES.forEach(type => {
+                    map[type] = thiz.questions.filter(q => q.category === type);
+                });
+                return map;
+            },
+            anyTypeSelected: function () {
+                if (!this.newEntry) {
+                    return {};
+                }
+                return Object.keys(this.newEntry.questionCategories).reduce((total, key) => {
+                    return total || this.newEntry.questionCategories[key];
+                }, false);
             }
         },
         methods: {
@@ -67,58 +141,25 @@
             resetSearch() {
                 thiz.query = "";
                 thiz.searchResults = {};
+            },
+            chooseAnswer(question, event) {
+                thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
+            },
+            save() {
+                localStorageService.saveUser(thiz.newEntry.updatedBy);
+                dataService.saveEntry(thiz.newEntry).then(() => {
+                    thiz.$router.push("/list");
+                });
             }
         },
         mounted() {
             thiz = this;
-            let q = new Question({
-                question: new TranslatableText({
-                    de: 'Werden angezeigte Symbole werden auch als Text dargestellt?'
-                }),
-                category: 'DISPLAY_VISUAL',
-                possibleAnswers: [
-                    {id: 1, text: 'Keine Symbole werden auch textuell dargestellt', percentage: 0},
-                    {id: 2, text: 'Einige wenige Symbole werden auch textuell dargestellt', percentage: 30},
-                    {id: 3, text: 'Alle wichtigen Symbole werden auch textuell dargestellt', percentage: 80},
-                    {id: 4, text: 'Alle Symbole werden auch textuell dargestellt', percentage: 100}
-                ],
-                weight: 1,
-                weightPerGroup: {
-                    TARGETGROUP_VISUAL_IMPAIRMENT: 1.5,
-                    TARGETGROUP_COGNITIVE_IMPAIRMENT: 2
-                }
-            });
-            let q2 = new Question({
-                question: new TranslatableText({
-                    de: 'Können die Funktionen und Einstellungen, welche durch die normale Bedienung des Geräts einstellbar sind, auch durch die Spracheingabe eingestellt werden?'
-                }),
-                category: 'USAGE_SPEECH',
-                possibleAnswers: [
-                    {id: 1, text: 'Es sind die grundlegensten Funktionen per Spracheingabe verfügbar', percentage: 50},
-                    {id: 2, text: 'Es sind alle wichtigen Funktionen per Spracheingabe verfügbar', percentage: 90},
-                    {id: 3, text: 'Es alle Funktionen per Spracheingabe verfügbar', percentage: 100}
-                ],
-                weight: 1.5
-            });
-            let q3 = new Question({
-                question: new TranslatableText({
-                    de: 'Sind Bedienelemente für Menschen mit Bewegungseinschränkungen und Rollstuhlfahrer bei angemessener Einbauhöhe erreichbar?'
-                }),
-                category: 'USAGE_HAPTIC',
-                possibleAnswers: [
-                    {id: 1, text: 'Die Bedienelemente sind im Sitzen vor dem Gerät nicht erreichbar', percentage: 0},
-                    {id: 2, text: 'Es sind die wichtigsten Bedienelemente im Sitzen vor dem Gerät erreichbar', percentage: 60},
-                    {id: 3, text: 'Es sind alle Bedienelemente im Sitzen vor dem Gerät erreichbar', percentage: 100},
-                ],
-                weightPerGroup: {
-                    TARGETGROUP_VISUAL_IMPAIRMENT: 0,
-                    TARGETGROUP_MOTOR_IMPAIRMENT: 1,
-                    TARGETGROUP_COGNITIVE_IMPAIRMENT: 0
-                }
-            });
             dataService.getQuestions().then(questions => {
-                console.log(questions);
-            })
+                thiz.questions = JSON.parse(JSON.stringify(questions));
+                thiz.questions.forEach(question => {
+                    thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
+                });
+            });
         },
     }
 </script>
@@ -129,15 +170,28 @@
             display: flex;
         }
 
-        .row label {
+        .row > label {
             display: flex;
-            align-items: center;
             justify-content: flex-end;
+            text-align: right;
         }
+
+        .row > label.center {
+            align-items: center;
+        }
+    }
+
+    .row {
+        margin-bottom: 1em;
     }
 
     .search-result {
         display: flex;
         align-items: center;
+    }
+
+    ul {
+        list-style-type: none;
+        margin-bottom: 0;
     }
 </style>
