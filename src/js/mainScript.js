@@ -6,6 +6,7 @@ import LoginView from '../vue-components/loginView.vue'
 import * as log from 'loglevel';
 import {databaseService} from "./service/data/databaseService";
 import {localStorageService} from "./service/data/localStorageService";
+import {i18nService} from "./service/i18nService";
 
 function init() {
     window.log = log;
@@ -42,6 +43,10 @@ function init() {
         inserted: function (el) {
             el.focus()
         }
+    });
+
+    Vue.filter('translate', function (key) {
+        return i18nService.translate(key);
     });
 
     Vue.use(VueRouter);
