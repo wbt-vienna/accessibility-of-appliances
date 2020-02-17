@@ -3,15 +3,16 @@
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
             <label for="search" class="two columns">Produktsuche</label>
-            <input id="search" type="text" v-model="query" @input="search()" placeholder="Produktname" class="eight columns"/>
+            <input id="search" type="text" v-model="query" @input="search()" placeholder="Produktname" class="six columns"/>
+            <span class="two columns">durch <a href="https://geizhals.at/" target="_blank">geizhals.at</a></span>
         </div>
         <ul style="list-style-type: none">
-            <li v-for="product in searchResults.products" class="row">
-                <div class="eight columns offset-by-two">
-                    <button @click="select(product)">Wählen</button>
-                    <img :src="product.img"/>
+            <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em">
+                <div class="six columns offset-by-two search-result">
+                    <img :src="product.img" style="margin-right: 1em"/>
                     <a target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
+                <button @click="select(product)" class="two columns">Wählen</button>
             </li>
         </ul>
         <div v-if="newEntry">
@@ -21,7 +22,7 @@
             </div>
             <div class="row">
                 <label for="category" class="two columns">Kategorie</label>
-                <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}}</span>
+                <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}} ({{newEntry.category.id}})</span>
             </div>
         </div>
     </div>
@@ -50,7 +51,6 @@
                 }
                 util.debounce(() => {
                     dataService.getSearchResults(thiz.query).then(result => {
-                        console.log(result.products);
                         thiz.searchResults = result;
                     });
                 }, 1000);
@@ -74,4 +74,20 @@
 </script>
 
 <style scoped>
+    @media (min-width: 550px) {
+        .row {
+            display: flex;
+        }
+
+        .row label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+    }
+
+    .search-result {
+        display: flex;
+        align-items: center;
+    }
 </style>
