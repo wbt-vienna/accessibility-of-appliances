@@ -44,7 +44,7 @@ dataService.getSearchResults = function (query) {
             loc: 'at',
             k: query
         }, function (response) {
-            response = response.split('&amp;').join('&').split('&gt;').join('>').split('<b>').join('').split('</b>').join('');
+            response = response.split('&amp;').join('&').split('&gt;').join('>').split('&quot;').join('\\"').split('<b>').join('').split('</b>').join('');
             let data = JSON.parse(response.substring(8, response.length - 1));
             let products = [];
             let categories = [];
