@@ -32,6 +32,8 @@
     import {dataService} from "../js/service/data/dataService";
     import {util} from "../js/util/util";
     import {Entry} from "../js/model/Entry";
+    import {Question} from "../js/model/Question";
+    import {TranslatableText} from "../js/model/TranslatableText";
 
     let thiz = null;
     export default {
@@ -69,6 +71,54 @@
         },
         mounted() {
             thiz = this;
+            let q = new Question({
+                question: new TranslatableText({
+                    de: 'Werden angezeigte Symbole werden auch als Text dargestellt?'
+                }),
+                category: 'DISPLAY_VISUAL',
+                possibleAnswers: [
+                    {id: 1, text: 'Keine Symbole werden auch textuell dargestellt', percentage: 0},
+                    {id: 2, text: 'Einige wenige Symbole werden auch textuell dargestellt', percentage: 30},
+                    {id: 3, text: 'Alle wichtigen Symbole werden auch textuell dargestellt', percentage: 80},
+                    {id: 4, text: 'Alle Symbole werden auch textuell dargestellt', percentage: 100}
+                ],
+                weight: 1,
+                weightPerGroup: {
+                    TARGETGROUP_VISUAL_IMPAIRMENT: 1.5,
+                    TARGETGROUP_COGNITIVE_IMPAIRMENT: 2
+                }
+            });
+            let q2 = new Question({
+                question: new TranslatableText({
+                    de: 'Können die Funktionen und Einstellungen, welche durch die normale Bedienung des Geräts einstellbar sind, auch durch die Spracheingabe eingestellt werden?'
+                }),
+                category: 'USAGE_SPEECH',
+                possibleAnswers: [
+                    {id: 1, text: 'Es sind die grundlegensten Funktionen per Spracheingabe verfügbar', percentage: 50},
+                    {id: 2, text: 'Es sind alle wichtigen Funktionen per Spracheingabe verfügbar', percentage: 90},
+                    {id: 3, text: 'Es alle Funktionen per Spracheingabe verfügbar', percentage: 100}
+                ],
+                weight: 1.5
+            });
+            let q3 = new Question({
+                question: new TranslatableText({
+                    de: 'Sind Bedienelemente für Menschen mit Bewegungseinschränkungen und Rollstuhlfahrer bei angemessener Einbauhöhe erreichbar?'
+                }),
+                category: 'USAGE_HAPTIC',
+                possibleAnswers: [
+                    {id: 1, text: 'Die Bedienelemente sind im Sitzen vor dem Gerät nicht erreichbar', percentage: 0},
+                    {id: 2, text: 'Es sind die wichtigsten Bedienelemente im Sitzen vor dem Gerät erreichbar', percentage: 60},
+                    {id: 3, text: 'Es sind alle Bedienelemente im Sitzen vor dem Gerät erreichbar', percentage: 100},
+                ],
+                weightPerGroup: {
+                    TARGETGROUP_VISUAL_IMPAIRMENT: 0,
+                    TARGETGROUP_MOTOR_IMPAIRMENT: 1,
+                    TARGETGROUP_COGNITIVE_IMPAIRMENT: 0
+                }
+            });
+            dataService.getQuestions().then(questions => {
+                console.log(questions);
+            })
         },
     }
 </script>
