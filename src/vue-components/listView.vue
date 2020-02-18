@@ -8,6 +8,7 @@
                 <span>{{entry.product.label}}</span>
             </li>
         </ul>
+        <span v-if="entries && entries.length === 0">(keine erfassten Geräte)</span>
     </div>
 </template>
 
@@ -31,7 +32,7 @@
                 })
             },
             edit(entry) {
-
+                thiz.$router.push('/edit/' + entry.id);
             },
             remove(entry) {
                 if (!confirm(`Wollen Sie den Eintrag "${entry.product.label}" wirklich löschen?`)) {
