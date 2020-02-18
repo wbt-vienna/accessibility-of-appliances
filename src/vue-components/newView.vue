@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>Neues Gerät erfassen</h2>
-        <div class="row">
+        <div class="row" v-if="isNew">
             <label for="search" class="three columns center">Produktsuche</label>
             <input id="search" type="text" v-model="query" @input="search()" placeholder="Produktname" class="six columns"/>
             <span class="two columns">durch <a href="https://geizhals.at/" target="_blank">geizhals.at</a></span>
@@ -15,7 +15,7 @@
                 <button @click="select(product)" class="two columns">Wählen</button>
             </li>
         </ul>
-        <div v-if="newEntry.product">
+        <div v-if="newEntry && newEntry.product">
             <div class="row">
                 <label for="product" class="three columns center">Produkt</label>
                 <span id="product" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
@@ -71,6 +71,8 @@
                         </select>
                     </div>
                 </div>
+                <div>Score: {{newEntry.score}}</div>
+                <div>by Group: {{newEntry.scoresByGroup}}</div>
                 <div v-if="anyTypeSelected" class="row" style="margin: 4em 0 3em 0">
                     <button class="six columns offset-by-three" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
                 </div>
@@ -86,15 +88,17 @@
     import {constants} from "../js/util/constants";
     import {Answer} from "../js/model/Answer";
     import {localStorageService} from "../js/service/data/localStorageService";
+    import {entryUtil} from "../js/util/entryUtil";
 
     let thiz = null;
     export default {
         components: {},
         data() {
             return {
+                isNew: !this.$route.params.id,
                 questions: null,
                 searchResults: {},
-                newEntry: JSON.parse(JSON.stringify(new Entry())),
+                newEntry: null,
                 query: "",
                 constants: constants
             }
@@ -144,6 +148,7 @@
             },
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
+                entryUtil.calculateScores(thiz.newEntry, thiz.questions);
             },
             save() {
                 localStorageService.saveUser(thiz.newEntry.updatedBy);
@@ -156,8 +161,20 @@
             thiz = this;
             dataService.getQuestions().then(questions => {
                 thiz.questions = JSON.parse(JSON.stringify(questions));
-                thiz.questions.forEach(question => {
-                    thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
+                let promises = [];
+                if (!thiz.isNew) {
+                    promises.push(dataService.getEntry(thiz.$route.params.id).then(entry => {
+                        thiz.newEntry = JSON.parse(JSON.stringify(entry));
+                        return Promise.resolve();
+                    }));
+                } else {
+                    thiz.newEntry = JSON.parse(JSON.stringify(new Entry()));
+                }
+
+                Promise.all(promises).then(() => {
+                    thiz.questions.forEach(question => {
+                        thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
+                    });
                 });
             });
         },
