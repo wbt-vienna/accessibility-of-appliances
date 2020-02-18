@@ -10,7 +10,7 @@ class Entry extends ObjectModel({
 
     product: [Object], //id, label, img
     category: [Object], //id, label, path
-    questionCategories: [Object],
+    questionCategories: [Object], // categoryID -> [true/false]
 
     answers: [Object], //Question ID -> Answer
     score: [Number],
@@ -26,6 +26,8 @@ class Entry extends ObjectModel({
             modelName: Entry.getModelName(),
             questionCategories: {},
             answers: {},
+            score: null,
+            scoresByGroup: {},
             created: new Date().getTime(),
             updated: new Date().getTime(),
             updatedBy: localStorageService.getUser() || ""
