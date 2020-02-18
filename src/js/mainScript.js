@@ -15,6 +15,7 @@ function init() {
         {path: '/new', component: NewView},
         {path: '/list', component: ListView},
         {path: '/login', component: LoginView},
+        {path: '/edit/:id', component: NewView},
         {path: '*', redirect: '/list'}
     ];
 
