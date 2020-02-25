@@ -1,18 +1,6 @@
 <template>
     <div>
         <h2>Erfasste Geräte</h2>
-        <h3>Tabelle mit HTML-Table</h3>
-        <table class="u-full-width">
-            <tr class="row">
-                <th class="eight columns" scope="col">Gerätebezeichnung</th>
-                <th class="three columns" scope="col">Gesamtbewertung</th>
-            </tr>
-            <tr v-for="entry in entries" class="row">
-                <td class="eight columns">{{entry.product.label}}</td>
-                <td class="three columns" style="text-align: center;">{{Math.round(entry.score)}} %</td>
-            </tr>
-        </table>
-
         <h3>Tabelle als Liste (ul)</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="eight columns">Titel</span>
@@ -39,6 +27,18 @@
                 </div>
             </li>
         </ul>
+
+        <h3>Tabelle mit HTML-Table</h3>
+        <table class="u-full-width">
+            <tr class="row">
+                <th class="eight columns" scope="col">Gerätebezeichnung</th>
+                <th class="three columns" scope="col">Gesamtbewertung</th>
+            </tr>
+            <tr v-for="entry in entries" class="row">
+                <td class="eight columns">{{entry.product.label}}</td>
+                <td class="three columns" style="text-align: center;">{{Math.round(entry.score)}} %</td>
+            </tr>
+        </table>
         <span v-if="entries && entries.length === 0">(keine erfassten Geräte)</span>
     </div>
 </template>
