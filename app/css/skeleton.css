@@ -406,6 +406,9 @@ there.
 
 
 @media (max-width: 550px) {
+  .hide-mobile {
+    display: none;
+  }
   .show-desktop {
     display: none;
   }
