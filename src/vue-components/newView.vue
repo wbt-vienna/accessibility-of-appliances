@@ -89,6 +89,7 @@
     import {Answer} from "../js/model/Answer";
     import {localStorageService} from "../js/service/data/localStorageService";
     import {entryUtil} from "../js/util/entryUtil";
+    import {databaseService} from "../js/service/data/databaseService";
 
     let thiz = null;
     export default {
@@ -159,6 +160,10 @@
         },
         mounted() {
             thiz = this;
+            if (!databaseService.isLoggedInReadWrite()) {
+                thiz.$router.push('/login');
+                return;
+            }
             dataService.getQuestions().then(questions => {
                 thiz.questions = JSON.parse(JSON.stringify(questions));
                 let promises = [];
