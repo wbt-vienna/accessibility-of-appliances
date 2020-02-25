@@ -14,21 +14,28 @@
         </table>
 
         <h3>Tabelle als Liste (ul)</h3>
-        <div class="row show-desktop" style="font-weight: bold" aria-hidden="true">
+        <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="eight columns">Titel</span>
             <span class="four columns" style="text-align: center">Bewertung</span>
         </div>
         <ul>
             <li v-for="entry in entries" class="row">
                 <div class="eight columns">
+                    <div class="show-desktop" aria-hidden="true" v-if="isLoggedIn" >
+                        <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
+                        <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
+                    </div>
                     <label class="show-mobile" aria-hidden="true">Bezeichnung: </label>
-                    <button v-if="isLoggedIn" title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
-                    <button v-if="isLoggedIn" title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
                     <a target="_blank" aria-label="Bezeichnung" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
                 <div class="four columns">
                     <label class="show-mobile" aria-hidden="true">Bewertung: </label>
                     <div class="bewertung" aria-label="Bewertung" style="display: inline-block">{{Math.round(entry.score)}} %</div>
+                </div>
+                <div v-if="isLoggedIn" class="four columns show-mobile" aria-hidden="false">
+                    <label style="display: inline-block">Aktionen: </label>
+                    <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
+                    <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
                 </div>
             </li>
         </ul>
@@ -86,7 +93,7 @@
     }
 
     button {
-        padding: 0;
+        padding: 0 0.5em;
         margin: 5px;
     }
 
