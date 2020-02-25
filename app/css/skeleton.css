@@ -418,7 +418,7 @@ there.
 /* Larger than phablet (also point when grid becomes active) */
 @media (min-width: 550px) {
   .show-desktop {
-    display: block;
+    display: inline-block;
   }
   .show-mobile {
     display: none;
