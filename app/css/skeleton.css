@@ -391,7 +391,6 @@ hr {
   display: table;
   clear: both; }
 
-
 /* Media Queries
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 /*
@@ -405,8 +404,26 @@ there.
 /* Larger than mobile */
 @media (min-width: 400px) {}
 
+
+@media (max-width: 550px) {
+  .show-desktop {
+    display: none;
+  }
+  .show-mobile {
+    display: inline-block;
+  }
+}
+
+
 /* Larger than phablet (also point when grid becomes active) */
-@media (min-width: 550px) {}
+@media (min-width: 550px) {
+  .show-desktop {
+    display: block;
+  }
+  .show-mobile {
+    display: none;
+  }
+}
 
 /* Larger than tablet */
 @media (min-width: 750px) {}
