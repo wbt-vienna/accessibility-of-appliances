@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="wrapper">
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
-            <p>
+            <p class="eleven columns">
                 Für die Eintragung von Geräten wird die Katalogisierung von <a href="https://geizhals.at/" target="_blank">geizhals.at</a>
                 verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
             </p>
@@ -14,13 +14,13 @@
         <div class="row" v-if="isSearching">
             <span class="eight columns offset-by-three">es wird gesucht...</span>
         </div>
-        <ul style="list-style-type: none" aria-label="Suchergebnisse">
+        <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
             <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em">
-                <div class="six columns offset-by-three search-result">
+                <div class="nine columns">
                     <img :src="product.img" style="margin-right: 1em"/>
                     <a target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
-                <button @click="select(product)" class="two columns">Wählen</button>
+                <button @click="select(product)" class="three columns">Wählen</button>
             </li>
         </ul>
         <div v-if="newEntry && newEntry.product">
@@ -53,13 +53,13 @@
                 </div>
                 <div class="row">
                     <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
-                    <input type="text" id="updatedBy" class="six columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
+                    <input type="text" id="updatedBy" class="eight columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
                 </div>
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
                         <div class="row" v-for="question in categoryQuestions">
-                            <span class="six columns">{{question.question.de}}</span>
+                            <span class="five columns">{{question.question.de}}</span>
                             <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -71,7 +71,7 @@
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <span class="six columns">{{question.question.de}}</span>
+                        <span class="five columns">{{question.question.de}}</span>
                         <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 <div v-if="anyTypeSelected" class="row" style="margin: 4em 0 3em 0">
-                    <button class="six columns offset-by-three" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
+                    <button class="five columns offset-by-three button-primary" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
                 </div>
             </div>
         </div>
@@ -216,8 +216,6 @@
 
         .row > label {
             display: flex;
-            justify-content: flex-end;
-            text-align: right;
         }
 
         .row > label.center {
