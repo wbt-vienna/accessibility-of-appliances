@@ -60,24 +60,23 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
 
         entry.scoresByGroup = entry.scoresByGroup || {};
         constants.TARGETGROUPS.forEach(targetGroup => {
-            entry.scoresByGroup[targetGroup] = Math.round((actualPoints[targetGroup] / maxPoints[targetGroup]) * 100*100)/100;
+            entry.scoresByGroup[targetGroup] = Math.round((actualPoints[targetGroup] / maxPoints[targetGroup]) * 100 * 100) / 100;
         });
 
         // Wenn Kategorie USAGE_HAPTIC nicht vorhanden, dann werden bei "Blind" -und "Visual impaired" Gruppen Punkte abgezogen
-        if(!entry.questionCategories[constants.USAGE_HAPTIC]){
+        if (!entry.questionCategories[constants.USAGE_HAPTIC]) {
             entry.scoresByGroup[constants.TARGETGROUP_BLIND] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_BLIND], 70);
-            entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT],85);
-            entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT],85);
+            entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
+            entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
         }
         // Wenn weder Spracheingabe noch haptische Elemente zur Bedienung, dann 0 Punkte bei Blind und sehr grobe Abzüge (90%) bei seheingeschänkten.
-        if(!entry.questionCategories[constants.USAGE_HAPTIC] && !entry.questionCategories[constants.USAGE_SPEECH]){
+        if (!entry.questionCategories[constants.USAGE_HAPTIC] && !entry.questionCategories[constants.USAGE_SPEECH]) {
             entry.scoresByGroup[constants.TARGETGROUP_BLIND] = 0;
             entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 50);
         }
-        if(!entry.questionCategories[constants.USAGE_SPEECH]){
+        if (!entry.questionCategories[constants.USAGE_SPEECH]) {
             entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
         }
-
 
         entry.score = 0;
         constants.TARGETGROUPS.forEach(targetGroup => {
