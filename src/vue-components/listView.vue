@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrapper">
         <h2>Erfasste Geräte</h2>
         <h3>Tabelle als Liste (ul)</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">

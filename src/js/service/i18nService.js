@@ -19,6 +19,10 @@ i18nService.translations['de'] = {
     USAGE_SPEECH: 'Bedienung des Geräts durch Spracheingabe',
     USAGE_TOUCH: 'Bedienung des Geräts via Touchscreen',
     USAGE_GENERAL: 'Allgemeine Bedienung und Einfachheit',
+    TARGETGROUP_VISUAL_IMPAIRMENT: 'Visuell eingeschränkte Personen',
+    TARGETGROUP_BLIND: 'Blinde Personen',
+    TARGETGROUP_MOTOR_IMPAIRMENT: 'Motorisch eingeschränkte Personen',
+    TARGETGROUP_COGNITIVE_IMPAIRMENT: 'Kognitiv eingeschränkte Personen'
 };
 
 i18nService.translations['en'] = {

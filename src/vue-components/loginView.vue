@@ -9,12 +9,12 @@
             <input id="passwordField" type="password" v-model="password"/>
             <button @click="login">Login</button>
             <span v-if="wrongPassword">Falsches Passwort!</span>
-            <div>
+            <div style="margin-top: 1.5em">
                 <input id="inSavePassword" type="checkbox" v-model="savePassword"/>
-                <label for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
+                <label style="display: inline-block" for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
             </div>
         </div>
-        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 25.02.2020</span>
+        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 27.02.2020</span>
     </div>
 </template>
 

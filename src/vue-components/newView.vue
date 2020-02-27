@@ -1,28 +1,36 @@
 <template>
-    <div>
+    <div class="wrapper">
         <h2>Neues Gerät erfassen</h2>
+        <div class="row">
+            <p class="eleven columns">
+                Für die Eintragung von Geräten wird die Katalogisierung von <a href="https://geizhals.at/" target="_blank">geizhals.at</a>
+                verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
+            </p>
+        </div>
         <div class="row" v-if="isNew">
             <label for="search" class="three columns center">Produktsuche</label>
-            <input id="search" type="text" v-model="query" @input="search()" placeholder="Produktname" class="six columns"/>
-            <span class="two columns">durch <a href="https://geizhals.at/" target="_blank">geizhals.at</a></span>
+            <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
         </div>
-        <ul style="list-style-type: none">
+        <div class="row" v-if="isSearching">
+            <span class="eight columns offset-by-three">es wird gesucht...</span>
+        </div>
+        <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
             <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em">
-                <div class="six columns offset-by-three search-result">
+                <div class="nine columns">
                     <img :src="product.img" style="margin-right: 1em"/>
                     <a target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
-                <button @click="select(product)" class="two columns">Wählen</button>
+                <button @click="select(product)" class="three columns">Wählen</button>
             </li>
         </ul>
         <div v-if="newEntry && newEntry.product">
             <div class="row">
-                <label for="product" class="three columns center">Produkt</label>
+                <label for="product" class="three columns center">Gewähltes Produkt</label>
                 <span id="product" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
             </div>
             <div class="row">
                 <label for="category" class="three columns center">Kategorie</label>
-                <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}} ({{newEntry.category.id}})</span>
+                <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}}</span>
             </div>
             <div v-if="newEntry.category">
                 <div class="row">
@@ -45,13 +53,13 @@
                 </div>
                 <div class="row">
                     <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
-                    <input type="text" id="updatedBy" class="six columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
+                    <input type="text" id="updatedBy" class="eight columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
                 </div>
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
                         <div class="row" v-for="question in categoryQuestions">
-                            <span class="six columns">{{question.question.de}}</span>
+                            <span class="five columns">{{question.question.de}}</span>
                             <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -63,7 +71,7 @@
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <span class="six columns">{{question.question.de}}</span>
+                        <span class="five columns">{{question.question.de}}</span>
                         <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -71,10 +79,18 @@
                         </select>
                     </div>
                 </div>
-                <div>Score: {{newEntry.score}}</div>
-                <div>by Group: {{newEntry.scoresByGroup}}</div>
+                <div class="row" v-if="newEntry.score">
+                    <label for="scoreTotal" class="three columns">Aufgrund von Angaben berechnete Gesamtbewertung</label>
+                    <span id="scoreTotal" class="eight columns">{{Math.round(newEntry.score)}} %</span>
+                </div>
+                <div class="row" v-if="newEntry.score">
+                    <label for="scoreTargetgroup" class="three columns">Bewertung je Zielgruppe</label>
+                    <div class="eight columns" id="scoreTargetgroup">
+                        <div v-for="groupId in Object.keys(newEntry.scoresByGroup)">{{groupId | translate}}: {{Math.round(newEntry.scoresByGroup[groupId])}} %</div>
+                    </div>
+                </div>
                 <div v-if="anyTypeSelected" class="row" style="margin: 4em 0 3em 0">
-                    <button class="six columns offset-by-three" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
+                    <button class="five columns offset-by-three button-primary" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
                 </div>
             </div>
         </div>
@@ -101,6 +117,7 @@
                 searchResults: {},
                 newEntry: null,
                 query: "",
+                isSearching: false,
                 constants: constants
             }
         },
@@ -126,15 +143,20 @@
         },
         methods: {
             search() {
+                thiz.searchResults = {};
                 if (!thiz.query) {
+                    util.clearDebounce("SEARCH");
                     thiz.resetSearch();
+                    thiz.isSearching = false;
                     return;
                 }
+                thiz.isSearching = true;
                 util.debounce(() => {
                     dataService.getSearchResults(thiz.query).then(result => {
                         thiz.searchResults = result;
+                        thiz.isSearching = false;
                     });
-                }, 1000);
+                }, 500, "SEARCH");
             },
             select(product) {
                 thiz.resetSearch();
@@ -194,8 +216,6 @@
 
         .row > label {
             display: flex;
-            justify-content: flex-end;
-            text-align: right;
         }
 
         .row > label.center {
