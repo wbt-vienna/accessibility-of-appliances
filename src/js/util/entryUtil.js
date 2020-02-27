@@ -5,8 +5,7 @@ let entryUtil = {};
 entryUtil.calculateScores = function (entryOrEntries, questions) {
     // entryOrEntries zu Array konvertieren
     entryOrEntries = entryOrEntries instanceof Array ? entryOrEntries : [entryOrEntries];
-
-    //Alle Elemente von Array durchgehen
+        //Alle Elemente von Array durchgehen
     entryOrEntries.forEach(entry => {
         //"entry" ist aktueller Eintrag
         //"questions" sind alle Fragen
@@ -36,6 +35,8 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
                 let maxForAnswer = weightForGroup * question.possibleAnswers.reduce((total2, possibleAnswer) => { //reduce ergibt maximalpunkte für "question" => so gut wie immer 100
                     return Math.max(total2, possibleAnswer.percentage);
                 }, 0);
+                //
+
                 total[targetGroup] = total[targetGroup] ? total[targetGroup] + maxForAnswer : maxForAnswer;
             });
             return total;
@@ -57,14 +58,31 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
             return total;
         }, {});
 
-        entry.score = 0;
         entry.scoresByGroup = entry.scoresByGroup || {};
         constants.TARGETGROUPS.forEach(targetGroup => {
-            entry.scoresByGroup[targetGroup] = (actualPoints[targetGroup] / maxPoints[targetGroup]) * 100;
+            entry.scoresByGroup[targetGroup] = Math.round((actualPoints[targetGroup] / maxPoints[targetGroup]) * 100*100)/100;
+        });
+
+        // Wenn Kategorie USAGE_HAPTIC nicht vorhanden, dann werden bei "Blind" -und "Visual impaired" Gruppen Punkte abgezogen
+        if(!entry.questionCategories[constants.USAGE_HAPTIC]){
+            entry.scoresByGroup[constants.TARGETGROUP_BLIND] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_BLIND], 75);
+            entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT],90);
+        }
+        // Wenn weder Spracheingabe noch haptische Elemente zur Bedienung, dann 0 Punkte bei Blind und sehr grobe Abzüge (90%) bei seheingeschänkten.
+        if(!entry.questionCategories[constants.USAGE_HAPTIC] && !entry.questionCategories[constants.DISPLAY_HAPTIC]){
+            entry.scoresByGroup[constants.TARGETGROUP_BLIND] = 0;
+            entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 50);
+        }
+
+        entry.score = 0;
+        constants.TARGETGROUPS.forEach(targetGroup => {
             entry.score = entry.score + entry.scoresByGroup[targetGroup];
         });
         entry.score /= constants.TARGETGROUPS.length;
+        entry.score = Math.round(entry.score*100)/100;
     });
+
+
 };
 
 function getWeight(question, targetGroupId) {
