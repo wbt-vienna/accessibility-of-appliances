@@ -3,18 +3,18 @@
         <h2>Erfasste Geräte</h2>
         <h3>Tabelle als Liste (ul)</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <span class="eight columns">Titel</span>
-            <span class="four columns" style="text-align: center">Bewertung</span>
+            <h2 class="eight columns">Titel</h2>
+            <h2  class="four columns" style="text-align: center">Bewertung</h2>
         </div>
         <ul>
             <li v-for="entry in entries" class="row">
                 <div class="eight columns">
                     <div class="show-desktop" aria-hidden="true" v-if="isLoggedIn" >
-                        <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
-                        <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
+                        <button aria-label="Gerätebewertung bearbeiten" title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
+                        <button aria-label="Gerätebewertung löschen" title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
                     </div>
                     <label class="show-mobile" aria-hidden="true">Bezeichnung: </label>
-                    <a target="_blank" aria-label="Bezeichnung" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                    <a target="_blank" aria-label="Geizhalslink des Geräts" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
                 <div class="four columns">
                     <label class="show-mobile" aria-hidden="true">Bewertung: </label>
