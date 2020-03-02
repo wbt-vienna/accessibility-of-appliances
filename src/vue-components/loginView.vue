@@ -14,7 +14,7 @@
                 <label style="display: inline-block" for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
             </div>
         </div>
-        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 27.02.2020 b</span>
+        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 02.03.2020 </span>
     </div>
 </template>
 
