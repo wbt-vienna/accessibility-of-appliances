@@ -4,15 +4,16 @@
             <span>Bereits eingeloggt!</span>
             <button @click="logout()">Ausloggen</button>
         </div>
+
         <div v-if="!loggedIn">
             <label for="passwordField">Passwort: </label>
             <input id="passwordField" type="password" v-model="password"/>
-            <button @click="login">Login</button>
-            <span v-if="wrongPassword">Falsches Passwort!</span>
             <div style="margin-top: 1.5em">
                 <input id="inSavePassword" type="checkbox" v-model="savePassword"/>
                 <label style="display: inline-block" for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
             </div>
+            <button @click="login">Login</button>
+            <span v-if="wrongPassword">Falsches Passwort!</span>
         </div>
         <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 02.03.2020  </span>
     </div>
