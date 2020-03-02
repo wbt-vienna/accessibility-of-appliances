@@ -68,11 +68,14 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
             entry.scoresByGroup[constants.TARGETGROUP_BLIND] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_BLIND], 70);
             entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
             entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
+            entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT], 85);
         }
         // Wenn weder Spracheingabe noch haptische Elemente zur Bedienung, dann 0 Punkte bei Blind und sehr grobe Abzüge (90%) bei seheingeschänkten.
         if (!entry.questionCategories[constants.USAGE_HAPTIC] && !entry.questionCategories[constants.USAGE_SPEECH]) {
             entry.scoresByGroup[constants.TARGETGROUP_BLIND] = 0;
             entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 50);
+            entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT], 60);
+            entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT], 60);
         }
         if (!entry.questionCategories[constants.USAGE_SPEECH]) {
             entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
