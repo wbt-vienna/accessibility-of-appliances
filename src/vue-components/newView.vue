@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <div class="wrapper">
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
@@ -7,6 +7,7 @@
                 verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
             </p>
         </div>
+
         <div class="row" v-if="isNew">
             <label for="search" class="three columns center">Produktsuche</label>
             <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
@@ -25,12 +26,15 @@
         </ul>
         <div v-if="newEntry && newEntry.product">
             <div class="row">
-                <label for="product" class="three columns center">Gewähltes Produkt</label>
+                <h6 class="three columns center"><b> Gewähltes Produkt</b></h6>
                 <span id="product" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
             </div>
             <div class="row">
                 <label for="category" class="three columns center">Kategorie</label>
                 <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}}</span>
+            </div>
+            <div class="row">
+                <h3  class="eleven colums">Allgemeine Informationen</h3>
             </div>
             <div v-if="newEntry.category">
                 <div class="row">
