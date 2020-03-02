@@ -16,18 +16,18 @@
             <span class="eight columns offset-by-three">es wird gesucht...</span>
         </div>
         <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
-            <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em">
-                <div class="nine columns">
+            <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
+                <div class="nine columns" >
                     <img :src="product.img" style="margin-right: 1em"/>
-                    <a target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
+                    <a aria-label="Geizhalslink des Geräts" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
-                <button @click="select(product)" class="three columns">Wählen</button>
+                <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
             </li>
         </ul>
         <div v-if="newEntry && newEntry.product">
             <div class="row">
                 <h6 class="three columns center"><b> Gewähltes Produkt</b></h6>
-                <span id="product" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
+                <span id="product" aria-label="Geizhals-link zum gewählten Produkt" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
             </div>
             <div class="row">
                 <label for="category" class="three columns center">Kategorie</label>
