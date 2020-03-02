@@ -64,7 +64,8 @@
                         <h3>{{type | translate}}</h3>
                         <div class="row" v-for="question in categoryQuestions">
                             <span class="five columns">{{question.question.de}}</span>
-                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
+                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" id="dropdownmenu">
+                                <label for="dropdownmenu" > Antwortmöglichkeiten </label>
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                                 <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
@@ -76,7 +77,8 @@
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
                         <span class="five columns">{{question.question.de}}</span>
-                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId">
+                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" id="dropdowngeneral">
+                            <label for="dropdowngeneral" > Antwortmöglichkeiten </label>
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                             <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
