@@ -1,32 +1,39 @@
 <template>
     <div class="wrapper" v-if="initialized">
-        <h2>Neues Gerät erfassen</h2>
-        <div class="row">
-            <p class="eleven columns">
-                Für die Eintragung von Geräten wird die Katalogisierung von <a href="https://geizhals.at/" target="_blank">geizhals.at</a>
-                verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
-            </p>
+        <h2 v-if="isNew">Neues Gerät erfassen</h2>
+        <h2 v-if="!isNew">Eintrag bearbeiten</h2>
+        <div v-if="isNew && !(newEntry && newEntry.product)">
+            <div class="row">
+                <p class="eleven columns">
+                    Für die Eintragung von Geräten wird die Katalogisierung von <a href="https://geizhals.at/" target="_blank">geizhals.at</a>
+                    verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
+                </p>
+            </div>
+
+            <div class="row">
+                <label for="search" class="three columns center">Produktsuche</label>
+                <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
+            </div>
+            <div class="row" v-if="isSearching">
+                <span class="eight columns offset-by-three">es wird gesucht...</span>
+            </div>
+            <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
+                <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
+                    <div class="nine columns" >
+                        <img :src="product.img" style="margin-right: 1em"/>
+                        <a aria-label="externer Link des Produkts auf geizhals.at" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
+                    </div>
+                    <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
+                </li>
+            </ul>
         </div>
 
-        <div class="row" v-if="isNew && !(newEntry && newEntry.product)">
-            <label for="search" class="three columns center">Produktsuche</label>
-            <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
-        </div>
-        <div class="row" v-if="isSearching">
-            <span class="eight columns offset-by-three">es wird gesucht...</span>
-        </div>
-        <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
-            <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
-                <div class="nine columns" >
-                    <img :src="product.img" style="margin-right: 1em"/>
-                    <a aria-label="externer Link des Produkts auf geizhals.at" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
-                </div>
-                <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
-            </li>
-        </ul>
         <div v-if="newEntry && newEntry.product">
             <div class="row">
-                <label for="product" class="three columns center">Gewähltes Produkt</label>
+                <h3  class="eleven colums">Gewähltes Produkt</h3>
+            </div>
+            <div class="row">
+                <label for="product" class="three columns center">Bezeichnung</label>
                 <span id="product" aria-label="externer Link des gewählten Produkts auf geizhals.at" class="seven columns" v-if="newEntry.product">
                     <a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a>
                 </span>
