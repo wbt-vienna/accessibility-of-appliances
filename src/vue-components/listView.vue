@@ -1,44 +1,33 @@
 <template>
     <div class="wrapper">
         <h2>Erfasste Geräte</h2>
-        <h3>Tabelle als Liste (ul)</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <h2 class="eight columns">Titel</h2>
-            <h2  class="four columns" style="text-align: center">Bewertung</h2>
+            <span class="eight columns">Titel</span>
+            <span class="four columns" style="text-align: center">Bewertung</span>
         </div>
         <ul>
             <li v-for="entry in entries" class="row">
                 <div class="eight columns">
                     <div class="show-desktop" aria-hidden="true" v-if="isLoggedIn" >
-                        <button aria-label="Gerätebewertung bearbeiten" title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
-                        <button aria-label="Gerätebewertung löschen" title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
+                        <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
+                        <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
                     </div>
-                    <label class="show-mobile" aria-hidden="true">Bezeichnung: </label>
-                    <a target="_blank" aria-label="Geizhalslink des Geräts" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                    <label for="link" class="show-mobile" aria-hidden="false">Bezeichnung: </label>
+                    <a id="link" target="_blank" aria-label="externer Link des Geräts auf geizhals.at" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
                 <div class="four columns">
-                    <label class="show-mobile" aria-hidden="true">Bewertung: </label>
-                    <div class="bewertung" aria-label="Bewertung" style="display: inline-block">{{Math.round(entry.score)}} %</div>
+                    <label class="show-mobile" aria-hidden="false" for="score">Bewertung: </label>
+                    <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block">{{Math.round(entry.score)}} %</div>
                 </div>
                 <div v-if="isLoggedIn" class="four columns show-mobile" aria-hidden="false">
-                    <label style="display: inline-block">Aktionen: </label>
-                    <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
-                    <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
+                    <label for="btngroup" style="display: inline-block">Aktionen: </label>
+                    <div id="btngroup" role="group" style="display: inline-block">
+                        <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i><span style="display: none" aria-hidden="false">Eintrag bearbeiten</span></button>
+                        <button title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/><span style="display: none" aria-hidden="false">Eintrag löschen</span></button>
+                    </div>
                 </div>
             </li>
         </ul>
-
-        <h3>Tabelle mit HTML-Table</h3>
-        <table class="u-full-width">
-            <tr class="row">
-                <th class="eight columns" scope="col">Gerätebezeichnung</th>
-                <th class="three columns" scope="col">Gesamtbewertung</th>
-            </tr>
-            <tr v-for="entry in entries" class="row">
-                <td class="eight columns">{{entry.product.label}}</td>
-                <td class="three columns" style="text-align: center;">{{Math.round(entry.score)}} %</td>
-            </tr>
-        </table>
         <span v-if="entries && entries.length === 0">(keine erfassten Geräte)</span>
     </div>
 </template>
