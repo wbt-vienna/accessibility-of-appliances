@@ -1,12 +1,26 @@
 <template>
     <div class="wrapper">
         <h2>Erfasste Geräte</h2>
+        <h3>Filter</h3>
+        <div class="row">
+            <label for="inText" class="three columns">Freitextsuche</label>
+            <input id="inText" type="search" class="seven columns" style="height: 1.5em; margin-bottom: 1em" v-model="filterOptions.text" @input="filterChanged()"/>
+        </div>
+        <div class="row">
+            <label for="category" class="three columns">Kategorie</label>
+            <select id="category" type="search" class="seven columns" @change="filterChanged()" v-model="filterOptions.category">
+                <option selected value="">alle Kategorien</option>
+                <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
+            </select>
+        </div>
+
+        <h3>Liste der Einträge</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="eight columns">Titel</span>
             <span class="four columns" style="text-align: center">Bewertung</span>
         </div>
         <ul>
-            <li v-for="entry in entries" class="row">
+            <li v-for="entry in filteredEntries" class="row">
                 <div class="eight columns">
                     <div class="show-desktop" aria-hidden="true" v-if="isLoggedIn" >
                         <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
@@ -28,7 +42,7 @@
                 </div>
             </li>
         </ul>
-        <span v-if="entries && entries.length === 0">(keine erfassten Geräte)</span>
+        <span v-if="entries && filteredEntries.length === 0">(keine Geräte gefunden)</span>
     </div>
 </template>
 
@@ -44,6 +58,12 @@
         data() {
             return {
                 entries: null,
+                filteredEntries: null,
+                filterOptions: {
+                    category: "",
+                    text: ""
+                },
+                categories: {},
                 isLoggedIn: databaseService.isLoggedInReadWrite()
             }
         },
@@ -51,6 +71,10 @@
             init() {
                 dataService.getEntries().then(entries => {
                     thiz.entries = entries;
+                    thiz.entries.forEach(e => {
+                        thiz.categories[e.category.id] = e.category.label;
+                    });
+                    thiz.filterChanged();
                 })
             },
             edit(entry) {
@@ -63,6 +87,15 @@
                 dataService.remove(entry.id).then(() => {
                     thiz.init();
                 });
+            },
+            filterChanged() {
+                thiz.filteredEntries = thiz.entries;
+                if (thiz.filterOptions.text) {
+                    thiz.filteredEntries = thiz.filteredEntries.filter(e => e.product.label.toLowerCase().indexOf(thiz.filterOptions.text.toLowerCase()) !== -1);
+                }
+                if (thiz.filterOptions.category) {
+                    thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
+                }
             }
         },
         mounted() {
