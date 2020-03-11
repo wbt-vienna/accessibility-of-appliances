@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper" v-if="initialized">
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
             <p class="eleven columns">
@@ -125,6 +125,7 @@
                 newEntry: null,
                 query: "",
                 isSearching: false,
+                initialized: false,
                 constants: constants
             }
         },
@@ -218,6 +219,7 @@
                     thiz.questions.forEach(question => {
                         thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
                     });
+                    thiz.initialized = true;
                     if (thiz.isNew) {
                         thiz.focusSearch();
                     }
