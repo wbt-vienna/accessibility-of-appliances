@@ -1,4 +1,4 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
     <div class="wrapper">
         <h2>Neues Gerät erfassen</h2>
         <div class="row">
@@ -8,7 +8,7 @@
             </p>
         </div>
 
-        <div class="row" v-if="isNew">
+        <div class="row" v-if="isNew && !(newEntry && newEntry.product)">
             <label for="search" class="three columns center">Produktsuche</label>
             <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
         </div>
@@ -26,8 +26,11 @@
         </ul>
         <div v-if="newEntry && newEntry.product">
             <div class="row">
-                <h6 class="three columns center"><b> Gewähltes Produkt</b></h6>
-                <span id="product" aria-label="Geizhals-link zum gewählten Produkt" class="eight columns" v-if="newEntry.product"><a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a></span>
+                <label for="product" class="three columns center">Gewähltes Produkt</label>
+                <span id="product" aria-label="Geizhals-link zum gewählten Produkt" class="seven columns" v-if="newEntry.product">
+                    <a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a>
+                </span>
+                <button v-if="isNew" @click="resetEntry()" class="one column" title="Anderes Produkt suchen und wählen"><i aria-hidden="true" class="fas fa-times"/><span style="display: none" aria-hidden="false">Anderes Produkt suchen und wählen</span></button>
             </div>
             <div class="row">
                 <label for="category" class="three columns center">Kategorie</label>
@@ -175,6 +178,15 @@
                 thiz.query = "";
                 thiz.searchResults = {};
             },
+            resetEntry() {
+                thiz.newEntry.product = null;
+                thiz.focusSearch();
+            },
+            focusSearch() {
+                thiz.$nextTick(() => {
+                    document.getElementById('search').focus();
+                });
+            },
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
                 entryUtil.calculateScores(thiz.newEntry, thiz.questions);
@@ -208,6 +220,9 @@
                     thiz.questions.forEach(question => {
                         thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
                     });
+                    if (thiz.isNew) {
+                        thiz.focusSearch();
+                    }
                 });
             });
         },
