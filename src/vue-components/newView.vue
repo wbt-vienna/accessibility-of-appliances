@@ -66,9 +66,8 @@
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
                         <div class="row" v-for="question in categoryQuestions">
-                            <span class="five columns">{{question.question.de}}</span>
-                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" id="dropdownmenu">
-                                <label for="dropdownmenu" > Antwortmöglichkeiten </label>
+                            <label :for="'dropdown' + question.id" class="five columns question">{{question.question.de}}</label>
+                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id">
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                                 <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
@@ -79,9 +78,8 @@
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <span class="five columns">{{question.question.de}}</span>
-                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" id="dropdowngeneral">
-                            <label for="dropdowngeneral" > Antwortmöglichkeiten </label>
+                        <label :for="'dropdowngeneral' + question.id" class="five columns question">{{question.question.de}}</label>
+                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id">
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                             <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
@@ -246,6 +244,10 @@
 
     .row {
         margin-bottom: 1em;
+    }
+
+    .question {
+        font-weight: normal;
     }
 
     .search-result {
