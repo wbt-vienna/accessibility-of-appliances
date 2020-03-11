@@ -19,7 +19,7 @@
             <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
                 <div class="nine columns" >
                     <img :src="product.img" style="margin-right: 1em"/>
-                    <a aria-label="Geizhalslink des Geräts" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
+                    <a aria-label="externer Link des Produkts auf geizhals.at" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                 </div>
                 <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
             </li>
@@ -27,7 +27,7 @@
         <div v-if="newEntry && newEntry.product">
             <div class="row">
                 <label for="product" class="three columns center">Gewähltes Produkt</label>
-                <span id="product" aria-label="Geizhals-link zum gewählten Produkt" class="seven columns" v-if="newEntry.product">
+                <span id="product" aria-label="externer Link des gewählten Produkts auf geizhals.at" class="seven columns" v-if="newEntry.product">
                     <a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a>
                 </span>
                 <button v-if="isNew" @click="resetEntry()" class="one column" title="Anderes Produkt suchen und wählen"><i aria-hidden="true" class="fas fa-times"/><span style="display: none" aria-hidden="false">Anderes Produkt suchen und wählen</span></button>
