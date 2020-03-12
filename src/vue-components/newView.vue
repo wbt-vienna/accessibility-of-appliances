@@ -21,7 +21,7 @@
                 <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
                     <div class="nine columns" >
                         <img :src="product.img" style="margin-right: 1em"/>
-                        <a aria-label="externer Link des Produkts auf geizhals.at" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
+                        <a title="externer Link des Produkts auf geizhals.at in neuem Tab" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                     </div>
                     <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
                 </li>
@@ -73,8 +73,8 @@
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
                         <div class="row" v-for="question in categoryQuestions">
-                            <label :for="'dropdown' + question.id" class="five columns question">{{question.question.de}}</label>
-                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id">
+                            <label :for="'dropdown' + question.id.split(' ').join('')" class="five columns question">{{question.question.de}}</label>
+                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id.split(' ').join('')">
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                                 <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
@@ -85,8 +85,8 @@
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <label :for="'dropdowngeneral' + question.id" class="five columns question">{{question.question.de}}</label>
-                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id">
+                        <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="five columns question">{{question.question.de}}</label>
+                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                             <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
