@@ -3,6 +3,9 @@
         <h2>Erfasste Geräte</h2>
         <h3>Filter</h3>
         <div class="row">
+            <p>Info: Filterkriterien (Freitextsuche oder Kategorie) werden bei Änderung sofort übernommen und die Liste der Geräte an die Filterkriterien angepasst.</p>
+        </div>
+        <div class="row">
             <label for="inText" class="three columns">Freitextsuche</label>
             <input id="inText" type="search" class="seven columns" style="height: 1.5em; margin-bottom: 1em" v-model="filterOptions.text" @input="filterChanged()"/>
         </div>
@@ -27,7 +30,7 @@
                         <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
                     </div>
                     <label for="link" class="show-mobile" aria-hidden="false">Bezeichnung: </label>
-                    <a id="link" target="_blank" aria-label="externer Link des Geräts auf geizhals.at" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                    <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
                 <div class="four columns">
                     <label class="show-mobile" aria-hidden="false" for="score">Bewertung: </label>
