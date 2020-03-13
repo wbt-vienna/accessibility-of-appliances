@@ -21,3 +21,8 @@ h3 {
 .wrapper {
     max-width: 1200px;
 }
+
+.only-screenreader {
+    position: absolute;
+    left: -9999px;
+}
