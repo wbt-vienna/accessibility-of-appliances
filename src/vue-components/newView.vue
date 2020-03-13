@@ -30,7 +30,7 @@
 
         <div v-if="newEntry && newEntry.product">
             <div class="row">
-                <h3  class="eleven colums">Gewähltes Produkt</h3>
+                <h3 class="eleven colums">Gewähltes Produkt</h3>
             </div>
             <div class="row">
                 <label for="product" class="three columns center">Bezeichnung</label>
@@ -227,9 +227,6 @@
                         thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
                     });
                     thiz.initialized = true;
-                    if (thiz.isNew) {
-                        thiz.focusSearch();
-                    }
                 });
             });
         },
