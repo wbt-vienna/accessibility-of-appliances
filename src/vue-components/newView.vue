@@ -2,32 +2,6 @@
     <div class="wrapper" v-if="initialized">
         <h2 v-if="isNew">Neues Gerät erfassen</h2>
         <h2 v-if="!isNew">Eintrag bearbeiten</h2>
-        <div v-if="isNew && !(newEntry && newEntry.product)">
-            <div class="row">
-                <p class="eleven columns">
-                    Für die Eintragung von Geräten wird die Katalogisierung von <a href="https://geizhals.at/" target="_blank">geizhals.at</a>
-                    verwendet. Suchen Sie nach Kategorie, Hersteller oder Typenbezeichnung um das zu testende Gerät zu finden. Die Eingabe in das Suchfeld startet die Suche automatisch.
-                </p>
-            </div>
-
-            <div class="row">
-                <label for="search" class="three columns center">Produktsuche</label>
-                <input id="search" type="search" v-model="query" @input="search()" placeholder="Kategorie, Hersteller, Typenbezeichnung" class="eight columns" autocomplete="off"/>
-            </div>
-            <div class="row" v-if="isSearching">
-                <span class="eight columns offset-by-three">es wird gesucht...</span>
-            </div>
-            <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
-                <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
-                    <div class="nine columns" >
-                        <img :src="product.img" style="margin-right: 1em"/>
-                        <a title="externer Link des Produkts auf geizhals.at in neuem Tab" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
-                    </div>
-                    <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
-                </li>
-            </ul>
-        </div>
-
         <div v-if="newEntry && newEntry.product">
             <div class="row">
                 <h3 class="eleven colums">Gewähltes Produkt</h3>
@@ -128,10 +102,7 @@
             return {
                 isNew: !this.$route.params.id,
                 questions: null,
-                searchResults: {},
                 newEntry: null,
-                query: "",
-                isSearching: false,
                 initialized: false,
                 constants: constants
             }
@@ -157,41 +128,8 @@
             }
         },
         methods: {
-            search() {
-                thiz.searchResults = {};
-                if (!thiz.query) {
-                    util.clearDebounce("SEARCH");
-                    thiz.resetSearch();
-                    thiz.isSearching = false;
-                    return;
-                }
-                thiz.isSearching = true;
-                util.debounce(() => {
-                    dataService.getSearchResults(thiz.query).then(result => {
-                        thiz.searchResults = result;
-                        thiz.isSearching = false;
-                    });
-                }, 500, "SEARCH");
-            },
-            select(product) {
-                thiz.resetSearch();
-                thiz.$set(thiz.newEntry, 'product', product);
-                dataService.getCategory(product.label).then(category => {
-                    thiz.$set(thiz.newEntry, 'category', category);
-                });
-            },
-            resetSearch() {
-                thiz.query = "";
-                thiz.searchResults = {};
-            },
             resetEntry() {
-                thiz.newEntry.product = null;
-                thiz.focusSearch();
-            },
-            focusSearch() {
-                thiz.$nextTick(() => {
-                    document.getElementById('search').focus();
-                });
+                thiz.$router.push('/new');
             },
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
@@ -218,6 +156,8 @@
                         thiz.newEntry = JSON.parse(JSON.stringify(entry));
                         return Promise.resolve();
                     }));
+                } else if (thiz.$route.params.newEntry) {
+                    thiz.newEntry = JSON.parse(JSON.stringify(thiz.$route.params.newEntry));
                 } else {
                     thiz.newEntry = JSON.parse(JSON.stringify(new Entry()));
                 }
@@ -254,11 +194,6 @@
 
     .question {
         font-weight: normal;
-    }
-
-    .search-result {
-        display: flex;
-        align-items: center;
     }
 
     ul {
