@@ -19,25 +19,26 @@
 
         <h3>Liste der Einträge</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <span class="eight columns">Titel</span>
-            <span class="four columns" style="text-align: center">Bewertung</span>
+            <span class="six columns">Titel</span>
+            <span class="three columns">Bewertung</span>
+            <span class="three columns">Aktionen</span>
         </div>
+        <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul>
             <li v-for="entry in filteredEntries" class="row">
-                <div class="eight columns">
-                    <div class="show-desktop" aria-hidden="true" v-if="isLoggedIn" >
-                        <button title="Bearbeiten" @click="edit(entry)"><i class="fas fa-edit"></i></button>
-                        <button title="Löschen" @click="remove(entry)"><i class="fas fa-trash-alt"/></button>
-                    </div>
-                    <label for="link" class="show-mobile" aria-hidden="false">Bezeichnung: </label>
+                <div class="six columns">
+                    <label for="link" class="show-mobile" aria-hidden="true">Bezeichnung: </label>
+                    <label for="link" class="only-screenreader">Bezeichnung</label>
                     <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
-                <div class="four columns">
+                <div class="three columns">
                     <label class="show-mobile" aria-hidden="false" for="score">Bewertung: </label>
-                    <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block">{{Math.round(entry.score)}} %</div>
+                    <label for="score" class="only-screenreader">Bewertung</label>
+                    <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block; text-align: left">{{Math.round(entry.score)}} %</div>
                 </div>
-                <div v-if="isLoggedIn" class="four columns show-mobile" aria-hidden="false">
-                    <label for="btngroup" style="display: inline-block">Aktionen: </label>
+                <div v-if="isLoggedIn" class="three columns">
+                    <label class="show-mobile" aria-hidden="false" for="btngroup">Aktionen: </label>
+                    <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
                         <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i><span style="display: none" aria-hidden="false">Eintrag bearbeiten</span></button>
                         <button title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/><span style="display: none" aria-hidden="false">Eintrag löschen</span></button>
@@ -45,7 +46,7 @@
                 </div>
             </li>
         </ul>
-        <span v-if="entries && filteredEntries.length === 0">(keine Geräte gefunden)</span>
+        <span v-if="entries && filteredEntries && filteredEntries.length === 0">(keine Geräte gefunden)</span>
     </div>
 </template>
 
@@ -53,6 +54,7 @@
     import {dataService} from "../js/service/data/dataService";
     import $ from 'jquery';
     import {constants} from "../js/util/constants";
+    import {util} from "../js/util/util";
     import {databaseService} from "../js/service/data/databaseService";
 
     let thiz = null;
@@ -92,13 +94,15 @@
                 });
             },
             filterChanged() {
-                thiz.filteredEntries = thiz.entries;
-                if (thiz.filterOptions.text) {
-                    thiz.filteredEntries = thiz.filteredEntries.filter(e => e.product.label.toLowerCase().indexOf(thiz.filterOptions.text.toLowerCase()) !== -1);
-                }
-                if (thiz.filterOptions.category) {
-                    thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
-                }
+                util.debounce(() => {
+                    thiz.filteredEntries = thiz.entries;
+                    if (thiz.filterOptions.text) {
+                        thiz.filteredEntries = thiz.filteredEntries.filter(e => e.product.label.toLowerCase().indexOf(thiz.filterOptions.text.toLowerCase()) !== -1);
+                    }
+                    if (thiz.filterOptions.category) {
+                        thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
+                    }
+                }, 700);
             }
         },
         mounted() {
