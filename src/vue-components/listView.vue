@@ -14,6 +14,7 @@
             <select id="category" type="search" class="seven columns" @change="filterChanged()" v-model="filterOptions.category">
                 <option selected value="">alle Kategorien</option>
                 <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
+                <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
             </select>
         </div>
 
@@ -27,6 +28,7 @@
         <ul>
             <li v-for="entry in filteredEntries" class="row">
                 <div class="six columns">
+                    <i v-if="entry.pendingConfirmation" class="fas fa-question-circle" title="nicht verifizierter Eintrag eines anonymen Users"></i>
                     <label for="link" class="show-mobile" aria-hidden="true">Bezeichnung: </label>
                     <label for="link" class="only-screenreader">Bezeichnung</label>
                     <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
@@ -40,8 +42,9 @@
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
-                        <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i><span style="display: none" aria-hidden="false">Eintrag bearbeiten</span></button>
-                        <button title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/><span style="display: none" aria-hidden="false">Eintrag löschen</span></button>
+                        <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i></button>
+                        <button title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
+                        <button v-if="entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
                 </div>
             </li>
@@ -93,18 +96,33 @@
                     thiz.init();
                 });
             },
+            verify(entry) {
+                entry.pendingConfirmation = false;
+                dataService.saveEntry(entry);
+            },
             filterChanged(timeout) {
-                timeout = timeout === undefined ? 700 : timeout;
+                timeout = timeout === undefined ? 500 : timeout;
                 util.debounce(() => {
                     thiz.filteredEntries = thiz.entries;
                     if (thiz.filterOptions.text) {
                         thiz.filteredEntries = thiz.filteredEntries.filter(e => e.product.label.toLowerCase().indexOf(thiz.filterOptions.text.toLowerCase()) !== -1);
                     }
                     if (thiz.filterOptions.category) {
-                        thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
+                        if (thiz.filterOptions.category === 'UNCONFIRMED') {
+                            thiz.filteredEntries = thiz.filteredEntries.filter(e => !!e.pendingConfirmation);
+                        } else {
+                            thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
+                        }
                     }
                     thiz.filteredEntries.sort((a, b) => {
-                        return b.score - a.score;
+                        let diff = b.score - a.score;
+                        if (!a.pendingConfirmation && !b.pendingConfirmation) {
+                            return diff;
+                        } else if (a.pendingConfirmation && b.pendingConfirmation) {
+                            return diff;
+                        } else {
+                            return a.pendingConfirmation ? 1 : -1;
+                        }
                     });
                 }, timeout);
             }
