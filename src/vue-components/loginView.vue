@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="margin-top: 2em">
         <div v-if="loggedIn">
             <span>Bereits eingeloggt!</span>
             <button @click="logout()">Ausloggen</button>
