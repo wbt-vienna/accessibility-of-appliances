@@ -19,7 +19,7 @@
             <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
                 <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
                     <div class="nine columns" >
-                        <img :src="product.img" style="margin-right: 1em"/>
+                        <img :src="product.img" style="margin-right: 1em" aria-hidden="true"/>
                         <a title="externer Link des Produkts auf geizhals.at in neuem Tab" target="_blank" :href="'https://geizhals.at/' + product.id">{{product.label}}</a>
                     </div>
                     <button @click="select(product)" class="three columns" aria-label="Gerät auswählen">Wählen</button>
