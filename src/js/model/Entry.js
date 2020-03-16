@@ -18,7 +18,8 @@ class Entry extends ObjectModel({
 
     created: [Number],
     updated: [Number],
-    updatedBy: [String]
+    updatedBy: [String],
+    pendingConfirmation: [Boolean]
 }) {
     constructor(properties) {
         let defaults = {
