@@ -137,6 +137,7 @@
             },
             save() {
                 localStorageService.saveUser(thiz.newEntry.updatedBy);
+                thiz.newEntry.pendingConfirmation = !databaseService.isLoggedInReadWrite();
                 dataService.saveEntry(thiz.newEntry).then(() => {
                     thiz.$router.push("/list");
                 });
@@ -144,10 +145,6 @@
         },
         mounted() {
             thiz = this;
-            if (!databaseService.isLoggedInReadWrite()) {
-                thiz.$router.push('/login');
-                return;
-            }
             dataService.getQuestions().then(questions => {
                 thiz.questions = JSON.parse(JSON.stringify(questions));
                 let promises = [];

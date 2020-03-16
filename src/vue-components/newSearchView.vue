@@ -78,10 +78,6 @@
         },
         mounted() {
             thiz = this;
-            if (!databaseService.isLoggedInReadWrite()) {
-                thiz.$router.push('/login');
-                return;
-            }
             thiz.newEntry = JSON.parse(JSON.stringify(new Entry()));
         },
     }
