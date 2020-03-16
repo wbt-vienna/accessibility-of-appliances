@@ -32,12 +32,12 @@
                     <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
                 <div class="three columns">
-                    <label class="show-mobile" aria-hidden="false" for="score">Bewertung: </label>
+                    <label class="show-mobile" aria-hidden="true" for="score">Bewertung: </label>
                     <label for="score" class="only-screenreader">Bewertung</label>
                     <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block; text-align: left">{{Math.round(entry.score)}} %</div>
                 </div>
                 <div v-if="isLoggedIn" class="three columns">
-                    <label class="show-mobile" aria-hidden="false" for="btngroup">Aktionen: </label>
+                    <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
                         <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i><span style="display: none" aria-hidden="false">Eintrag bearbeiten</span></button>
