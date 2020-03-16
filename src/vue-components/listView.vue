@@ -21,7 +21,7 @@
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="six columns">Titel</span>
             <span class="three columns">Bewertung</span>
-            <span class="three columns">Aktionen</span>
+            <span v-if="isLoggedIn" class="three columns">Aktionen</span>
         </div>
         <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul>
@@ -79,7 +79,7 @@
                     thiz.entries.forEach(e => {
                         thiz.categories[e.category.id] = e.category.label;
                     });
-                    thiz.filterChanged();
+                    thiz.filterChanged(0);
                 })
             },
             edit(entry) {
@@ -93,7 +93,8 @@
                     thiz.init();
                 });
             },
-            filterChanged() {
+            filterChanged(timeout) {
+                timeout = timeout === undefined ? 700 : timeout;
                 util.debounce(() => {
                     thiz.filteredEntries = thiz.entries;
                     if (thiz.filterOptions.text) {
@@ -102,7 +103,10 @@
                     if (thiz.filterOptions.category) {
                         thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
                     }
-                }, 700);
+                    thiz.filteredEntries.sort((a, b) => {
+                        return b.score - a.score;
+                    });
+                }, timeout);
             }
         },
         mounted() {
