@@ -15,7 +15,7 @@
             <button @click="login">Login</button>
             <span v-if="wrongPassword">Falsches Passwort!</span>
         </div>
-        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 13.03.2020 b</span>
+        <span style="position: absolute; bottom: 2em; left: 1em">Zuletzt aktualisiert: 16.03.2020</span>
     </div>
 </template>
 
