@@ -1,7 +1,7 @@
 {
   "name": "Barrierefreie Haushaltsgeräte",
   "short_name": "Haushaltsgeräte",
-  "start_url": ".",
+  "start_url": "../",
   "display": "standalone",
   "background_color" : "#fff" ,
   "description": "List of home appliances tested for accessibility",
