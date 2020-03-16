@@ -22,7 +22,7 @@
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="six columns">Titel</span>
             <span class="three columns">Bewertung</span>
-            <span v-if="isLoggedIn" class="three columns">Aktionen</span>
+            <span v-if="isLoggedIn || (filteredEntries && filteredEntries.filter(e => e.pendingConfirmation).length > 0)" class="three columns">Aktionen</span>
         </div>
         <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul>
@@ -38,13 +38,13 @@
                     <label for="score" class="only-screenreader">Bewertung</label>
                     <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block; text-align: left">{{Math.round(entry.score)}} %</div>
                 </div>
-                <div v-if="isLoggedIn" class="three columns">
+                <div v-if="isLoggedIn || entry.pendingConfirmation" class="three columns">
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
-                        <button title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i></button>
-                        <button title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
-                        <button v-if="entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)"><i aria-hidden="true" class="fas fa-check"></i></button>
+                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i></button>
+                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
+                        <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
                 </div>
             </li>
