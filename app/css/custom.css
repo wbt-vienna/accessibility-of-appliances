@@ -26,3 +26,7 @@ h3 {
     position: absolute;
     left: -9999px;
 }
+
+[v-cloak] {
+    display: none
+}
