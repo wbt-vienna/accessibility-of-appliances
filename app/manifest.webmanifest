@@ -1,0 +1,29 @@
+{
+  "name": "Barrierefreie Haushaltsgeräte",
+  "short_name": "Haushaltsgeräte",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color" : "#fff" ,
+  "description": "List of home appliances tested for accessibility",
+  "icons": [{
+    "src": "icons/Icon-48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }, {
+    "src": "icons/Icon-72.png",
+    "sizes": "72x72",
+    "type": "image/png"
+  }, {
+    "src": "icons/Icon-96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }, {
+    "src": "icons/Icon-144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }, {
+    "src": "icons/Icon-192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}
