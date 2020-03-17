@@ -160,6 +160,7 @@
                 }
 
                 Promise.all(promises).then(() => {
+                    entryUtil.calculateScores(thiz.newEntry, thiz.questions);
                     thiz.questions.forEach(question => {
                         thiz.newEntry.answers[question.id] = thiz.newEntry.answers[question.id] || JSON.parse(JSON.stringify(new Answer()));
                     });
