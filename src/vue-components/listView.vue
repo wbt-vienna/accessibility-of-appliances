@@ -59,6 +59,11 @@
             </li>
         </ul>
         <span v-if="entries && filteredEntries && filteredEntries.length === 0">(keine Geräte gefunden)</span>
+        <div class="row" v-if="isLoggedIn">
+            <button @click="recalculateAll()">Alle Einträge neu berechnen</button>
+            <span v-if="recalculateDone === false" aria-live="assertive">Einträge werden neu berechnet...</span>
+            <span v-if="recalculateDone === true" aria-live="assertive">Einträge sind neu berechnet und gespeichert!</span>
+        </div>
     </div>
 </template>
 
@@ -68,6 +73,7 @@
     import {constants} from "../js/util/constants";
     import {util} from "../js/util/util";
     import {databaseService} from "../js/service/data/databaseService";
+    import {entryUtil} from "../js/util/entryUtil";
 
     let thiz = null;
     export default {
@@ -81,6 +87,7 @@
                     text: "",
                     scoreType: ""
                 },
+                recalculateDone: undefined,
                 categories: {},
                 isLoggedIn: databaseService.isLoggedInReadWrite(),
                 constants: constants
@@ -110,6 +117,23 @@
             verify(entry) {
                 entry.pendingConfirmation = false;
                 dataService.saveEntry(entry);
+            },
+            recalculateAll() {
+                if (!confirm('Hiermit werden alle Einträge neu berechnet. Dieser Schritt ist nur notwendig, wenn die Bewertungskriterien verändert wurden. Möchen Sie fortfahen?')) {
+                    return;
+                }
+                thiz.recalculateDone = false;
+                dataService.getQuestions().then(questions => {
+                    let oldEntriesJSON = JSON.stringify(thiz.entries);
+                    entryUtil.calculateScores(thiz.entries, questions);
+                    if (oldEntriesJSON !== JSON.stringify(thiz.entries)) {
+                        dataService.saveEntries(thiz.entries).then(() => {
+                            thiz.recalculateDone = true;
+                        });
+                    } else {
+                        thiz.recalculateDone = true;
+                    }
+                });
             },
             filterChanged(timeout) {
                 timeout = timeout === undefined ? 500 : timeout;
