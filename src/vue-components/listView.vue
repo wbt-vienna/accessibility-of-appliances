@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <label for="inText" class="three columns">Freitextsuche</label>
-            <input id="inText" type="search" class="seven columns" style="height: 1.5em; margin-bottom: 1em" v-model="filterOptions.text" @input="filterChanged()"/>
+            <input id="inText" type="search" class="seven columns" style="height: 1.5em;" v-model="filterOptions.text" @input="filterChanged()"/>
         </div>
         <div class="row">
             <label for="category" class="three columns">Kategorie</label>
@@ -15,6 +15,13 @@
                 <option selected value="">alle Kategorien</option>
                 <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
                 <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
+            </select>
+        </div>
+        <div class="row">
+            <label for="scoreType" class="three columns">Anzuzeigende Bewertung für Zielgruppe</label>
+            <select id="scoreType" type="search" class="seven columns" @change="filterChanged()" v-model="filterOptions.scoreType">
+                <option selected value="">Gesamtbewertung</option>
+                <option v-for="targetGroupId in constants.TARGETGROUPS" :value="targetGroupId">{{targetGroupId | translate}}</option>
             </select>
         </div>
 
@@ -25,6 +32,7 @@
             <span v-if="isLoggedIn || (filteredEntries && filteredEntries.filter(e => e.pendingConfirmation).length > 0)" class="three columns">Aktionen</span>
         </div>
         <span class="only-screenreader">Die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet.</span>
+        <span class="only-screenreader">Die Liste ist absteigend nach Bewertung sortiert, beste Bewertung zuerst.</span>
         <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul>
             <li v-for="entry in filteredEntries" class="row">
@@ -36,8 +44,8 @@
                 </div>
                 <div class="three columns">
                     <label class="show-mobile" aria-hidden="true" for="score">Bewertung: </label>
-                    <label for="score" class="only-screenreader">Bewertung</label>
-                    <div id="score" class="bewertung" aria-label="Bewertung" style="display: inline-block; text-align: left">{{Math.round(entry.score)}} %</div>
+                    <label for="score" class="only-screenreader">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</label>
+                    <div id="score" class="bewertung" style="display: inline-block; text-align: left">{{filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)}} %</div>
                 </div>
                 <div v-if="isLoggedIn || entry.pendingConfirmation" class="three columns">
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
@@ -70,10 +78,12 @@
                 filteredEntries: null,
                 filterOptions: {
                     category: "",
-                    text: ""
+                    text: "",
+                    scoreType: ""
                 },
                 categories: {},
-                isLoggedIn: databaseService.isLoggedInReadWrite()
+                isLoggedIn: databaseService.isLoggedInReadWrite(),
+                constants: constants
             }
         },
         methods: {
@@ -116,7 +126,9 @@
                         }
                     }
                     thiz.filteredEntries.sort((a, b) => {
-                        let diff = b.score - a.score;
+                        let score1 = thiz.filterOptions.scoreType ? b.scoresByGroup[thiz.filterOptions.scoreType] : b.score;
+                        let score2 = thiz.filterOptions.scoreType ? a.scoresByGroup[thiz.filterOptions.scoreType] : a.score;
+                        let diff = score1 - score2;
                         if (!a.pendingConfirmation && !b.pendingConfirmation) {
                             return diff;
                         } else if (a.pendingConfirmation && b.pendingConfirmation) {
@@ -147,6 +159,10 @@
     button {
         padding: 0 0.5em;
         margin: 5px;
+    }
+
+    .row {
+        margin-bottom: 1em;
     }
 
     @media (max-width: 550px) {
