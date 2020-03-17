@@ -16,7 +16,6 @@ pouchDbService.initDatabase = function (username, password, remoteCouchDbAddress
         }
         _pouchDb = new PouchDB(remoteCouchDbAddress, {skip_setup: true, auth: {username, password}});
         _pouchDb.info().then(info => {
-            log.warn(info);
             if (info.error === 'unauthorized') {
                 return reject();
             }
