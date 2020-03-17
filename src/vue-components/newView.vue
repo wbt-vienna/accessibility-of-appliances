@@ -46,8 +46,11 @@
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
-                        <div class="row" v-for="question in categoryQuestions">
-                            <label :for="'dropdown' + question.id.split(' ').join('')" class="five columns question">{{question.question.de}}</label>
+                        <div class="row" v-for="question in categoryQuestions" :style="saveAttempted && !newEntry.answers[question.id].answerId ? 'border: 1px solid red' : ''">
+                            <label :for="'dropdown' + question.id.split(' ').join('')" class="five columns question">
+                                <span class="only-screenreader" v-if="saveAttempted && !newEntry.answers[question.id].answerId">(nicht beantwortet)</span>
+                                <span>{{question.question.de}}</span>
+                            </label>
                             <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id.split(' ').join('')">
                                 <option value="" disabled selected hidden>Antwort auswählen</option>
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -58,8 +61,11 @@
                 </div>
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
-                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="five columns question">{{question.question.de}}</label>
+                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]" :style="saveAttempted && !newEntry.answers[question.id].answerId ? 'border: 1px solid red' : ''">
+                        <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="five columns question">
+                            <span class="only-screenreader" v-if="saveAttempted && !newEntry.answers[question.id].answerId">(nicht beantwortet)</span>
+                            <span>{{question.question.de}}</span>
+                        </label>
                         <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
                             <option value="" disabled selected hidden>Antwort auswählen</option>
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
@@ -77,8 +83,14 @@
                         <div v-for="groupId in Object.keys(newEntry.scoresByGroup)">{{groupId | translate}}: {{Math.round(newEntry.scoresByGroup[groupId])}} %</div>
                     </div>
                 </div>
-                <div v-if="anyTypeSelected" class="row" style="margin: 4em 0 3em 0">
+                <div v-if="anyTypeSelected" class="row" style="margin-top: 4em">
                     <button class="five columns offset-by-three button-primary" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
+                </div>
+                <div class="row" style="margin-bottom: 4em">
+                    <span aria-hidden="true" class="five columns offset-by-three" v-if="anyTypeSelected && !isValid && saveAttempted"><i class="fas fa-times" style="color: red"></i> Fehler! Bitte beantworten Sie alle Fragen! Nicht ausgefüllte Fragen sind rot markiert.</span>
+                    <div class="only-screenreader" v-if="anyTypeSelected">
+                        <span aria-live="assertive">{{!isValid && saveAttempted ? 'Fehler! Bitte beantworten Sie alle Fragen! Nicht beantwortete Fragen sind mit Präfix "nicht beantwortet" gekennzeichnet.' : ''}}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -104,6 +116,8 @@
                 questions: null,
                 newEntry: null,
                 initialized: false,
+                saveAttempted: false,
+                recalculateCounter: 0,
                 constants: constants
             }
         },
@@ -125,6 +139,21 @@
                 return Object.keys(this.newEntry.questionCategories).reduce((total, key) => {
                     return total || this.newEntry.questionCategories[key];
                 }, false);
+            },
+            isValid() {
+                if (!thiz.questions || !thiz.newEntry) {
+                    return false;
+                }
+                thiz.recalculateCounter--;
+                let valid = true;
+                thiz.questions.forEach(question => {
+                    if (thiz.newEntry.questionCategories[question.category] || question.category === constants.USAGE_GENERAL) {
+                        if (!thiz.newEntry.answers[question.id].answerId && !thiz.newEntry.answers[question.id].notApplicable) {
+                            valid = false;
+                        }
+                    }
+                });
+                return valid;
             }
         },
         methods: {
@@ -134,8 +163,13 @@
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
                 entryUtil.calculateScores(thiz.newEntry, thiz.questions);
+                thiz.recalculateCounter++;
             },
             save() {
+                thiz.saveAttempted = true;
+                if (!thiz.isValid) {
+                    return;
+                }
                 localStorageService.saveUser(thiz.newEntry.updatedBy);
                 thiz.newEntry.pendingConfirmation = !databaseService.isLoggedInReadWrite();
                 dataService.saveEntry(thiz.newEntry).then(() => {
