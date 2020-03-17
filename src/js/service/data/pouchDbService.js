@@ -91,6 +91,14 @@ pouchDbService.save = function (modelName, data) {
     });
 };
 
+pouchDbService.bulkDocs = function (dataList) {
+    if (!dataList || !(dataList instanceof Array) || dataList.length === 0) {
+        log.warn('bulkSave: no valid dataList');
+        return Promise.reject();
+    }
+    return _pouchDb.bulkDocs(dataList);
+};
+
 /**
  * Deletes an object from database by ID.
  *

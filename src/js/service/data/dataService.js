@@ -19,6 +19,10 @@ dataService.saveEntry = function (entry) {
     return saveObject(Entry, entry);
 };
 
+dataService.saveEntries = function (entriesList) {
+    return saveObjects(Entry, entriesList);
+};
+
 dataService.getQuestions = function() {
     return getObjects(Question);
 };
@@ -94,6 +98,11 @@ function saveObject(type, data) {
         cache[type].push(data);
     }
     return databaseService.saveObject(type, data);
+}
+
+function saveObjects(type, dataList) {
+    cache[type] = null;
+    return databaseService.bulkSave(dataList);
 }
 
 function getObjects(type) {

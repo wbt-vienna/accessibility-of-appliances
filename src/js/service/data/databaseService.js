@@ -133,6 +133,18 @@ databaseService.saveObject = function (objectType, data, onlyUpdate) {
 };
 
 /**
+ * saves a list of objects/documents in one action
+ * @param objectList
+ * @return {Promise<never>}
+ */
+databaseService.bulkSave = function (objectList) {
+    objectList.forEach(object => {
+        object._id = object.id;
+    });
+    return pouchDbService.bulkDocs(JSON.parse(JSON.stringify(objectList)));
+};
+
+/**
  * removes an object from database.
  *
  * @param id ID of the object to delete.
