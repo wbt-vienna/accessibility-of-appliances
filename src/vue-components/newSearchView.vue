@@ -16,7 +16,7 @@
             <div class="row" v-if="isSearching">
                 <span class="eight columns offset-by-three">es wird gesucht...</span>
             </div>
-            <ul style="list-style-type: none" aria-label="Suchergebnisse" class="eight columns offset-by-three">
+            <ul style="list-style-type: none" aria-label="Suchergebnisse, die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet" class="eight columns offset-by-three">
                 <li v-for="product in searchResults.products" class="row" style="margin-top: 0.5em" >
                     <div class="nine columns" >
                         <img :src="product.img" style="margin-right: 1em" aria-hidden="true"/>
