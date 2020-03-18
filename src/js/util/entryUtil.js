@@ -48,11 +48,13 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
             constants.TARGETGROUPS.forEach(targetGroup => {
                 let answerId = entry.answers[questionId].answerId;
                 let question = questions.filter(q => q.id === questionId)[0];
-                let weightForGroup = getWeight(question, targetGroup);
-                let actualAnswer = question.possibleAnswers.filter(a => a.id === answerId)[0];
-                if (actualAnswer) {
-                    let percentage = weightForGroup * actualAnswer.percentage;
-                    total[targetGroup] = total[targetGroup] ? total[targetGroup] + percentage : percentage;
+                if (question) {
+                    let weightForGroup = getWeight(question, targetGroup);
+                    let actualAnswer = question.possibleAnswers.filter(a => a.id === answerId)[0];
+                    if (actualAnswer) {
+                        let percentage = weightForGroup * actualAnswer.percentage;
+                        total[targetGroup] = total[targetGroup] ? total[targetGroup] + percentage : percentage;
+                    }
                 }
             });
             return total;
