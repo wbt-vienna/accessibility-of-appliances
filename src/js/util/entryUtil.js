@@ -90,8 +90,22 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
         entry.score /= constants.TARGETGROUPS.length;
         entry.score = Math.round(entry.score*100)/100;
     });
+};
 
-
+entryUtil.isAnswerValid = function (entry, questionId, questions) {
+    if (!entry || !questionId || !questions) {
+        return false;
+    }
+    let question = questions.filter(q => q.id === questionId)[0];
+    if (!question) {
+        return true;
+    }
+    let answer = entry.answers[questionId];
+    let possibleAnswers = question.possibleAnswers.map(a => a.id);
+    if (possibleAnswers.indexOf(answer.answerId) !== -1 || answer.notApplicable) {
+        return true;
+    }
+    return false;
 };
 
 function getWeight(question, targetGroupId) {

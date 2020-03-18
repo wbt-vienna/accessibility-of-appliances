@@ -46,9 +46,9 @@
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
                         <h3>{{type | translate}}</h3>
-                        <div class="row" v-for="question in categoryQuestions" :style="saveAttempted && !newEntry.answers[question.id].answerId ? 'border: 1px solid red' : ''">
+                        <div class="row" v-for="question in categoryQuestions" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
                             <label :for="'dropdown' + question.id.split(' ').join('')" class="five columns question">
-                                <span class="only-screenreader" v-if="saveAttempted && !newEntry.answers[question.id].answerId">(nicht beantwortet)</span>
+                                <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                                 <span>{{question.question.de}}</span>
                             </label>
                             <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id.split(' ').join('')">
@@ -61,9 +61,9 @@
                 </div>
                 <div v-if="anyTypeSelected">
                     <h3>{{constants.USAGE_GENERAL | translate}}</h3>
-                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]" :style="saveAttempted && !newEntry.answers[question.id].answerId ? 'border: 1px solid red' : ''">
+                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
                         <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="five columns question">
-                            <span class="only-screenreader" v-if="saveAttempted && !newEntry.answers[question.id].answerId">(nicht beantwortet)</span>
+                            <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                             <span>{{question.question.de}}</span>
                         </label>
                         <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
@@ -118,7 +118,8 @@
                 initialized: false,
                 saveAttempted: false,
                 recalculateCounter: 0,
-                constants: constants
+                constants: constants,
+                entryUtil: entryUtil
             }
         },
         computed: {
@@ -148,9 +149,7 @@
                 let valid = true;
                 thiz.questions.forEach(question => {
                     if (thiz.newEntry.questionCategories[question.category] || question.category === constants.USAGE_GENERAL) {
-                        if (!thiz.newEntry.answers[question.id].answerId && !thiz.newEntry.answers[question.id].notApplicable) {
-                            valid = false;
-                        }
+                        valid = valid && entryUtil.isAnswerValid(thiz.newEntry, question.id, thiz.questions);
                     }
                 });
                 return valid;
