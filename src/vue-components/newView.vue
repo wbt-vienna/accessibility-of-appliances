@@ -56,9 +56,7 @@
                                 <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                                 <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
                             </select>
-                            <div class="row" >
-                            <button title="Kommentieren" @click="focus(question.id) && comment == true"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
-                            </div>
+                            <button title="Kommentieren" @click="focus(question.id)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
                         </div>
                     </div>
                 </div>
@@ -87,9 +85,9 @@
                         <div v-for="groupId in Object.keys(newEntry.scoresByGroup)">{{groupId | translate}}: {{Math.round(newEntry.scoresByGroup[groupId])}} %</div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" v-if="anyTypeSelected">
                     <label for="comment" class="three columns center">Kommentar:</label>
-                    <textarea type="text" ref="search" id="comment" class="eight columns" v-model="newEntry.comment" placeholder="Fügen Sie hier zusätzliche Anmerkungen zum Gerät ein."/>
+                    <textarea type="text" ref="search" id="comment" class="eight columns" v-model="newEntry.comment.text" placeholder="Fügen Sie hier zusätzliche Anmerkungen zum Gerät ein."/>
                 </div>
                 <div v-if="anyTypeSelected" class="row" style="margin-top: 4em">
                     <button class="five columns offset-by-three button-primary" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
@@ -108,12 +106,13 @@
 <script>
     import {dataService} from "../js/service/data/dataService";
     import {util} from "../js/util/util";
-    import {Entry} from "../js/model/Entry";
+    import {Entry as question, Entry} from "../js/model/Entry";
     import {constants} from "../js/util/constants";
     import {Answer} from "../js/model/Answer";
     import {localStorageService} from "../js/service/data/localStorageService";
     import {entryUtil} from "../js/util/entryUtil";
     import {databaseService} from "../js/service/data/databaseService";
+    import {Question} from "../js/model/Question";
 
     let thiz = null;
     export default {
@@ -167,9 +166,10 @@
             resetEntry() {
                 thiz.$router.push('/new');
             },
-            focus(){
+            focus(question){
+                thiz.newEntry.comment += '\n@' + question + ": ";
                 thiz.$refs.search.focus();
-                thiz.newEntry.comment += '\n@' + question.id + ": ";
+                thiz.newEntry.comment.applied===true;
             },
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;

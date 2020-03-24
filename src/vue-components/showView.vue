@@ -34,8 +34,10 @@
                     <label for="displayTypes" class="three columns">Darbietung wesentlicher Informationen für den Gebrauch</label>
                     <ul role="group" id="displayTypes" class="eight columns">
                         <li v-for="displayType in constants.DISPLAY_TYPES">
-                            <span :id="displayType"  />
-                            <label :for="displayType" style="display: inline-block">{{displayType + '_CHK' | translate}}</label>
+                            <div v-if="newEntry.questionCategories[displayType]">
+                                <span  :id="displayType"  />
+                                <label :for="displayType" style="display: inline-block">{{displayType + '_CHK' | translate}}</label>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -43,8 +45,10 @@
                     <label for="usageTypes" class="three columns">Nutzungsmöglichkeiten des Geräts</label>
                     <ul role="group" id="usageTypes" class="eight columns">
                         <li v-for="usageType in constants.USAGE_TYPES">
-                            <span :id="newEntry.questionCategories" />
-                            <label :for="usageType" style="display: inline-block">{{usageType + '_CHK' | translate}}</label>
+                            <div v-if="newEntry.questionCategories[usageType]">
+                                <span :id="usageType" />
+                                <label :for="usageType" style="display: inline-block">{{usageType + '_CHK' | translate}}</label>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -73,17 +77,14 @@
                             <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                             <span>{{question.question.de}}</span>
                         </label>
-                        <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
-                            <option value="" disabled selected hidden>Antwort auswählen</option>
-                            <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
-                            <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
-                        </select>
+                        <span>{{newEntry.answers[question.id].answerId.text}}</span>
                     </div>
                 </div>
 
                 <div class="row">
                     <label for="comment"  class="three columns center">Kommentar:</label>
-                    <span type="text" id="comment" class="eight columns" v-model="newEntry.comment" placeholder="Fügen Sie hier zusätzliche Anmerkungen zum Gerät ein."/>
+                    <span v-if="!comment">Kein Kommentar</span>
+                    <span :id="newEntry.comment" id="comment" class="eight columns" />
                 </div>
 
             </div>
