@@ -19,7 +19,7 @@ class Entry extends ObjectModel({
     created: [Number],
     updated: [Number],
     updatedBy: [String],
-    pendingConfirmation: [Boolean]
+    pendingConfirmation: [Boolean],
 }) {
     constructor(properties) {
         let defaults = {
@@ -31,7 +31,8 @@ class Entry extends ObjectModel({
             scoresByGroup: {},
             created: new Date().getTime(),
             updated: new Date().getTime(),
-            updatedBy: localStorageService.getUser() || ""
+            updatedBy: localStorageService.getUser() || "",
+
         };
         properties = properties || {};
         super(Object.assign(defaults, properties));

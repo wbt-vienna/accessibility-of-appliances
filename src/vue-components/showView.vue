@@ -1,31 +1,40 @@
 <template>
     <div class="wrapper" v-if="initialized">
-        <h2 v-if="isNew">Neues Gerät erfassen</h2>
-        <h2 v-if="!isNew">Eintrag bearbeiten</h2>
-        <div v-if="newEntry && newEntry.product">
+        <h2 v-if="!isNew">Bewertungseinsicht</h2>
+        <div >
             <div class="row">
-                <h3 class="eleven colums">Gewähltes Produkt</h3>
+                <h3 class="eleven colums">Zusammenfassung</h3>
             </div>
             <div class="row">
                 <label for="product" class="three columns center">Bezeichnung</label>
                 <span id="product" aria-label="externer Link des gewählten Produkts auf geizhals.at" class="seven columns" v-if="newEntry.product">
                     <a target="_blank" :href="'https://geizhals.at/' + newEntry.product.id">{{newEntry.product.label}}</a>
                 </span>
-                <button v-if="isNew" @click="resetEntry()" class="one column" title="Anderes Produkt suchen und wählen"><i aria-hidden="true" class="fas fa-times"/><span style="display: none" aria-hidden="false">Anderes Produkt suchen und wählen</span></button>
             </div>
+
             <div class="row">
                 <label for="category" class="three columns center">Kategorie</label>
                 <span id="category" class="eight columns" v-if="newEntry.category">{{newEntry.category.label}}</span>
             </div>
             <div class="row">
-                <h3  class="eleven colums">Allgemeine Informationen</h3>
+                <label for="scoreTotal" class="three columns">Aufgrund von Angaben berechnete Gesamtbewertung</label>
+                <span id="scoreTotal" class="eight columns">{{Math.round(newEntry.score)}} %</span>
             </div>
-            <div v-if="newEntry.category">
+            <div class="row">
+                <label for="scoreTargetgroup" class="three columns">Bewertung je Zielgruppe</label>
+                <div class="eight columns" id="scoreTargetgroup">
+                    <div v-for="groupId in Object.keys(newEntry.scoresByGroup)">{{groupId | translate}}: {{Math.round(newEntry.scoresByGroup[groupId])}} %</div>
+                </div>
+            </div>
+            <div class="row">
+                <h3  class="eleven colums">Detailierter Bewertungsbogen</h3>
+            </div>
+            <div >
                 <div class="row">
                     <label for="displayTypes" class="three columns">Darbietung wesentlicher Informationen für den Gebrauch</label>
                     <ul role="group" id="displayTypes" class="eight columns">
                         <li v-for="displayType in constants.DISPLAY_TYPES">
-                            <input :id="displayType" type="checkbox" v-model="newEntry.questionCategories[displayType]"/>
+                            <span :id="displayType"  />
                             <label :for="displayType" style="display: inline-block">{{displayType + '_CHK' | translate}}</label>
                         </li>
                     </ul>
@@ -34,14 +43,14 @@
                     <label for="usageTypes" class="three columns">Nutzungsmöglichkeiten des Geräts</label>
                     <ul role="group" id="usageTypes" class="eight columns">
                         <li v-for="usageType in constants.USAGE_TYPES">
-                            <input :id="usageType" type="checkbox" v-model="newEntry.questionCategories[usageType]"/>
+                            <span :id="newEntry.questionCategories" />
                             <label :for="usageType" style="display: inline-block">{{usageType + '_CHK' | translate}}</label>
                         </li>
                     </ul>
                 </div>
                 <div class="row">
                     <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
-                    <input type="text" id="updatedBy" class="eight columns" v-model="newEntry.updatedBy" placeholder="z.B. Namenskürzel / Vorname"/>
+                    <span  id="updatedBy" :id="newEntry.updatedBy" class="eight columns" />
                 </div>
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
@@ -51,14 +60,9 @@
                                 <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                                 <span>{{question.question.de}}</span>
                             </label>
-                            <select class="six columns" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdown' + question.id.split(' ').join('')">
-                                <option value="" disabled selected hidden>Antwort auswählen</option>
-                                <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
-                                <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
-                            </select>
-                            <div class="row" >
-                            <button title="Kommentieren" @click="focus(question.id) && comment == true"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
-                            </div>
+                            <span class="six columns"  :id="'dropdown' + question.id.split(' ').join('')">
+
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -74,32 +78,14 @@
                             <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
                             <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
                         </select>
-                        <button  title="Kommentieren" @click="focus(question.id)"><i aria-hidden="true" class="fas fa-comment"/></button>
                     </div>
                 </div>
-                <div class="row" v-if="newEntry.score">
-                    <label for="scoreTotal" class="three columns">Aufgrund von Angaben berechnete Gesamtbewertung</label>
-                    <span id="scoreTotal" class="eight columns">{{Math.round(newEntry.score)}} %</span>
-                </div>
-                <div class="row" v-if="newEntry.score">
-                    <label for="scoreTargetgroup" class="three columns">Bewertung je Zielgruppe</label>
-                    <div class="eight columns" id="scoreTargetgroup">
-                        <div v-for="groupId in Object.keys(newEntry.scoresByGroup)">{{groupId | translate}}: {{Math.round(newEntry.scoresByGroup[groupId])}} %</div>
-                    </div>
-                </div>
+
                 <div class="row">
-                    <label for="comment" class="three columns center">Kommentar:</label>
-                    <textarea type="text" ref="search" id="comment" class="eight columns" v-model="newEntry.comment" placeholder="Fügen Sie hier zusätzliche Anmerkungen zum Gerät ein."/>
+                    <label for="comment"  class="three columns center">Kommentar:</label>
+                    <span type="text" id="comment" class="eight columns" v-model="newEntry.comment" placeholder="Fügen Sie hier zusätzliche Anmerkungen zum Gerät ein."/>
                 </div>
-                <div v-if="anyTypeSelected" class="row" style="margin-top: 4em">
-                    <button class="five columns offset-by-three button-primary" @click="save()"><i class="fas fa-save"/> Eintrag Speichern</button>
-                </div>
-                <div class="row" style="margin-bottom: 4em">
-                    <span aria-hidden="true" class="five columns offset-by-three" v-if="anyTypeSelected && !isValid && saveAttempted"><i class="fas fa-times" style="color: red"></i> Fehler! Bitte beantworten Sie alle Fragen! Nicht ausgefüllte Fragen sind rot markiert.</span>
-                    <div class="only-screenreader" v-if="anyTypeSelected">
-                        <span aria-live="assertive">{{!isValid && saveAttempted ? 'Fehler! Bitte beantworten Sie alle Fragen! Nicht beantwortete Fragen sind mit Präfix "nicht beantwortet" gekennzeichnet.' : ''}}</span>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -166,10 +152,6 @@
         methods: {
             resetEntry() {
                 thiz.$router.push('/new');
-            },
-            focus(){
-                thiz.$refs.search.focus();
-                thiz.newEntry.comment += '\n@' + question.id + ": ";
             },
             chooseAnswer(question, event) {
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
