@@ -60,4 +60,11 @@ util.throttle = function (fn, args, minPauseMs, key) {
     }
 };
 
+util.getQuestionNumber = function (question) {
+    if (!question || !question.id) {
+        return '';
+    }
+    return question.id.substring(question.id.lastIndexOf(' ') + 1);
+};
+
 export {util};
