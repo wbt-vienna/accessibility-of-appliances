@@ -80,13 +80,10 @@
                         <span>{{newEntry.answers[question.id].answerId.text}}</span>
                     </div>
                 </div>
-
-                <div class="row">
+                <div class="row" v-if="newEntry.comment">
                     <label for="comment"  class="three columns center">Kommentar:</label>
-                    <span v-if="!comment">Kein Kommentar</span>
-                    <span :id="newEntry.comment" id="comment" class="eight columns" />
+                    <span id="comment" class="eight columns" />
                 </div>
-
             </div>
         </div>
     </div>
