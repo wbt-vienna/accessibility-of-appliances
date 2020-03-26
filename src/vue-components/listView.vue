@@ -51,9 +51,9 @@
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
+                        <button title="Eintrag ansehen" @click="route(entry)"><i aria-hidden="true" class="fas fa-eye"/></button>
                         <button v-if="isLoggedIn || entry.pendingConfirmation" title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i></button>
                         <button v-if="isLoggedIn || entry.pendingConfirmation" title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
-                        <button title="Eintrag ansehen" @click="route(entry)"><i aria-hidden="true" class="fas fa-eye"/></button>
                         <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
                 </div>
