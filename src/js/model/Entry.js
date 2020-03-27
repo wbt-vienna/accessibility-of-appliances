@@ -20,7 +20,7 @@ class Entry extends ObjectModel({
     updated: [Number],
     updatedBy: [String],
     pendingConfirmation: [Boolean],
-    comment: [Object] // text, boolean
+    comment: [String]
 }) {
     constructor(properties) {
         let defaults = {
@@ -33,7 +33,7 @@ class Entry extends ObjectModel({
             created: new Date().getTime(),
             updated: new Date().getTime(),
             updatedBy: localStorageService.getUser() || "",
-
+            comment: ''
         };
         properties = properties || {};
         super(Object.assign(defaults, properties));
