@@ -27,62 +27,62 @@
                 </div>
             </div>
             <div class="row">
-                <h3  class="eleven colums">Detailierter Bewertungsbogen</h3>
+                <h3  class="eleven colums">Allgemeine Informationen</h3>
             </div>
             <div >
                 <div class="row">
-                    <label for="displayTypes" class="three columns">Darbietung wesentlicher Informationen für den Gebrauch</label>
-                    <ul role="group" id="displayTypes" class="eight columns">
+                    <label for="displayTypes" class="three columns">Die Darbietung wesentlicher Informationen für den Gebrauch erfolgt:</label>
+                    <ul id="displayTypes" class="eight columns">
                         <li v-for="displayType in constants.DISPLAY_TYPES">
                             <div v-if="newEntry.questionCategories[displayType]">
-                                <span  :id="displayType"  />
-                                <label :for="displayType" style="display: inline-block">{{displayType + '_CHK' | translate}}</label>
+                                <span style="display: inline-block">{{displayType + '_CHK' | translate}}</span>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="row">
-                    <label for="usageTypes" class="three columns">Nutzungsmöglichkeiten des Geräts</label>
-                    <ul role="group" id="usageTypes" class="eight columns">
+                    <label for="usageTypes" class="three columns">Die Nutzungsmöglichkeiten des Geräts sind:</label>
+                    <ul id="usageTypes" class="eight columns">
                         <li v-for="usageType in constants.USAGE_TYPES">
                             <div v-if="newEntry.questionCategories[usageType]">
-                                <span :id="usageType" />
-                                <label :for="usageType" style="display: inline-block">{{usageType + '_CHK' | translate}}</label>
+                                <span style="display: inline-block">{{usageType + '_CHK' | translate}}</span>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="row">
                     <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
-                    <span  id="updatedBy" :id="newEntry.updatedBy" class="eight columns" />
+                    <span id="updatedBy" class="eight columns">{{newEntry.updatedBy}}</span>
                 </div>
                 <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
                     <div v-if="categoryQuestions.length > 0 && newEntry.questionCategories[type]">
-                        <h3>{{type | translate}}</h3>
+                        <h3>Fragen zu "{{type | translate}}"</h3>
                         <div class="row" v-for="question in categoryQuestions" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
                             <label :for="'dropdown' + question.id.split(' ').join('')" class="five columns question">
                                 <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                                 <span>{{question.question.de}}</span>
                             </label>
-                            <span class="six columns"  :id="'dropdown' + question.id.split(' ').join('')">
-
+                            <span class="six columns" :id="'dropdown' + question.id.split(' ').join('')">
+                                {{getTextAnswer(question)}}
                             </span>
                         </div>
                     </div>
                 </div>
                 <div v-if="anyTypeSelected">
-                    <h3>{{constants.USAGE_GENERAL | translate}}</h3>
+                    <h3>Fragen zu "{{constants.USAGE_GENERAL | translate}}"</h3>
                     <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
                         <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="five columns question">
                             <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
                             <span>{{question.question.de}}</span>
                         </label>
-                        <span>{{newEntry.answers[question.id].answerId.text}}</span>
+                        <span class="six columns" :id="'dropdown' + question.id.split(' ').join('')">
+                                {{getTextAnswer(question)}}
+                            </span>
                     </div>
                 </div>
-                <div class="row" v-if="newEntry.comment">
-                    <label for="comment"  class="three columns center">Kommentar:</label>
-                    <span id="comment" class="eight columns" />
+                <div v-if="newEntry.comment">
+                    <h3>Kommentar zum Eintrag</h3>
+                    <div id="comment">{{newEntry.comment}}</div>
                 </div>
             </div>
         </div>
@@ -155,6 +155,14 @@
                 thiz.newEntry.answers[question.id].notApplicable =  thiz.newEntry.answers[question.id].answerId === constants.ANSWER_NOT_APPLICABLE;
                 entryUtil.calculateScores(thiz.newEntry, thiz.questions);
                 thiz.recalculateCounter++;
+            },
+            getTextAnswer(question) {
+                let possibleAnswer = question.possibleAnswers.filter(a => a.id === thiz.newEntry.answers[question.id].answerId)[0];
+                if (possibleAnswer) {
+                    return `${possibleAnswer.percentage} % - ${possibleAnswer.text}`;
+                } else {
+                    return 'nicht zutreffend';
+                }
             },
             save() {
                 thiz.saveAttempted = true;
