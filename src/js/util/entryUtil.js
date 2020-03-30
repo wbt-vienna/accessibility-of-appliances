@@ -79,10 +79,6 @@ entryUtil.calculateScores = function (entryOrEntries, questions) {
             entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT], 60);
             entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT], 60);
         }
-        if (!entry.questionCategories[constants.USAGE_SPEECH]) {
-            entry.scoresByGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT] = Math.min(entry.scoresByGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT], 85);
-        }
-
         entry.score = 0;
         constants.TARGETGROUPS.forEach(targetGroup => {
             entry.score = entry.score + entry.scoresByGroup[targetGroup];

@@ -7,13 +7,15 @@ i18nService.translate = function (key) {
 i18nService.translations = {};
 i18nService.translations['de'] = {
     DISPLAY_VISUAL_CHK: 'visuell (Beschriftungen / Displays)',
-    DISPLAY_AUDITIVE_CHK: 'auditiv (Sprachausgabe / Signaltöne)',
+    DISPLAY_ACOUSTIC_CHK: 'akustisch (Signaltöne)',
+    DISPLAY_SPEECH_CHK: 'Sprachausgabe',
     DISPLAY_HAPTIC_CHK: 'haptisch / taktil (Drehknöpfe / Taster / taktile Beschriftungen)',
     USAGE_HAPTIC_CHK: 'haptische Elemente (Drehknöpfe / Taster)',
     USAGE_SPEECH_CHK: 'Spracheingabe',
     USAGE_TOUCH_CHK: 'Touchscreen',
     DISPLAY_VISUAL: 'Visuelle Darbietung von Informationen',
-    DISPLAY_AUDITIVE: 'Auditive Darbietung von Informationen',
+    DISPLAY_ACOUSTIC: 'Akustische Darbietung von Informationen',
+    DISPLAY_SPEECH: 'Sprachausgabe als Informationsdarbietung',
     DISPLAY_HAPTIC: 'Haptische Darbietung von Informationen',
     USAGE_HAPTIC: 'Bedienung des Geräts durch haptische Elemente',
     USAGE_SPEECH: 'Bedienung des Geräts durch Spracheingabe',

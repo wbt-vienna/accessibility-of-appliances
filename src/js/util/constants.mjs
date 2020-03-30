@@ -1,13 +1,14 @@
 let constants = {};
 
 constants.DISPLAY_VISUAL = 'DISPLAY_VISUAL';
-constants.DISPLAY_AUDITIVE = 'DISPLAY_AUDITIVE';
+constants.DISPLAY_ACOUSTIC = 'DISPLAY_ACOUSTIC';
+constants.DISPLAY_SPEECH = 'DISPLAY_SPEECH';
 constants.DISPLAY_HAPTIC = 'DISPLAY_HAPTIC';
 constants.USAGE_HAPTIC = 'USAGE_HAPTIC';
 constants.USAGE_SPEECH = 'USAGE_SPEECH';
 constants.USAGE_TOUCH = 'USAGE_TOUCH';
 constants.USAGE_GENERAL = 'USAGE_GENERAL';
-constants.DISPLAY_TYPES = [constants.DISPLAY_VISUAL, constants.DISPLAY_AUDITIVE, constants.DISPLAY_HAPTIC];
+constants.DISPLAY_TYPES = [constants.DISPLAY_VISUAL, constants.DISPLAY_ACOUSTIC, constants.DISPLAY_SPEECH, constants.DISPLAY_HAPTIC];
 constants.USAGE_TYPES = [constants.USAGE_HAPTIC, constants.USAGE_SPEECH, constants.USAGE_TOUCH];
 constants.ALL_TYPES = constants.DISPLAY_TYPES.concat(constants.USAGE_TYPES).concat(constants.USAGE_GENERAL);
 
