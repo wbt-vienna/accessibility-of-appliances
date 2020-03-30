@@ -64,9 +64,15 @@
                             </div>
                             <div class="row" v-if="showExamples === question.id" style="margin-bottom: 1.5em; display: block">
                                 <label for="questionExamples">Beispiele für Antwortmöglichkeiten für Frage {{util.getQuestionNumber(question)}}</label>
-                                <div id="questionExamples" v-for="possibleAnswer in question.possibleAnswers" v-if="possibleAnswer.examples">
-                                    <label class="question-example-label" :for="'examples' + util.getQuestionNumber(question)">Beispiele für Antwort: <span>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</span></label>
-                                    <ul :id="'examples' + util.getQuestionNumber(question)" style="list-style-type: circle">
+                                <div id="notApplicableExamples" v-for="examplesNotApplicable in question.examplesNotApplicable" v-if="question.examplesNotApplicable">
+                                    <label v-if="question.examplesNotApplicable" class="question-example-label" :for="'notApplicableExamples' + util.getQuestionNumber(question)">Beispiele für Antwort: nicht zutreffend <span></span></label>
+                                     <ul  v-if="question.examplesNotApplicable" :id="'notApplicableExamples' + util.getQuestionNumber(question)" style="list-style-type: circle">
+                                          <li v-for="examplesNotApplicable in question.examplesNotApplicable" style="padding-left: 1.5em">{{examplesNotApplicable.text}}</li>
+                                    </ul>
+                                </div>
+                                <div id="questionExamples" v-for="possibleAnswer in question.possibleAnswers">
+                                    <label v-if="possibleAnswer.examples" class="question-example-label" :for="'examples' + util.getQuestionNumber(question)">Beispiele für Antwort: <span>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</span></label>
+                                    <ul v-if="possibleAnswer.examples" :id="'examples' + util.getQuestionNumber(question)" style="list-style-type: circle">
                                         <li v-for="example in possibleAnswer.examples" style="padding-left: 1.5em">{{example.text}}</li>
                                     </ul>
                                 </div>
@@ -88,7 +94,22 @@
                         </select>
                         <div class="two columns">
                             <button title="Kommentar zu Antwort hinzufügen" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
-                            <button v-show="hasExamples(question)" title="Beispiele anzeigen" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
+                            <button v-show="hasExamples(question)" :title="showExamples===question.id ?'Beispiele ausblenden' : 'Beispiele anzeigen'" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
+                        </div>
+                        <div class="row" v-if="showExamples === question.id" style="margin-bottom: 1.5em; display: block">
+                            <label for="questionExamples">Beispiele für Antwortmöglichkeiten für Frage {{util.getQuestionNumber(question)}}</label>
+                            <div id="notApplicableEx">
+                                <label v-if="question.examplesNotApplicable" class="question-example-label" :for="'notApplicableEx' + util.getQuestionNumber(question)">Beispiele für Antwort: nicht zutreffend <span></span></label>
+                                <ul v-if="question.examplesNotApplicable" :id="'notApplicableEx' + util.getQuestionNumber(question)" style="list-style-type: circle">
+                                    <li v-for="examplesNotApplicable in question.examplesNotApplicable" style="padding-left: 1.5em">{{examplesNotApplicable.text}}</li>
+                                </ul>
+                            </div>
+                            <div id="questionEx" v-for="possibleAnswer in question.possibleAnswers" >
+                                <label v-if="possibleAnswer.examples" class="question-example-label" :for="'examples' + util.getQuestionNumber(question)">Beispiele für Antwort: <span>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</span></label>
+                                <ul v-if="possibleAnswer.examples" :id="'examples' + util.getQuestionNumber(question)" style="list-style-type: circle">
+                                    <li v-for="example in possibleAnswer.examples" style="padding-left: 1.5em">{{example.text}}</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -205,6 +226,9 @@
                 thiz.recalculateCounter++;
             },
             hasExamples(question) {
+                if (question.examplesNotApplicable) {
+                    return true;
+                }
                 return question.possibleAnswers.reduce((total, possibleAnswer) => {
                     return total || possibleAnswer.examples;
                 }, false)
