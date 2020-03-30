@@ -64,7 +64,7 @@ util.getQuestionNumber = function (question) {
     if (!question || !question.id) {
         return '';
     }
-    return question.id.substring(question.id.lastIndexOf(' ') + 1);
+    return question.label;
 };
 
 export {util};
