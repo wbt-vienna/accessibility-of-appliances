@@ -76,19 +76,30 @@
                 </div>
                 <div v-if="anyTypeSelected">
                     <h3>Fragen zu "{{constants.USAGE_GENERAL | translate}}"</h3>
-                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
-                        <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="four columns question">
-                            <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
-                            <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
-                        </label>
-                        <select class="six columns answer-select" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
-                            <option value="" disabled selected hidden>Antwort auswählen</option>
-                            <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
-                            <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
-                        </select>
-                        <div class="two columns">
-                            <button title="Kommentar zu Antwort hinzufügen" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
-                            <button v-show="hasExamples(question)" title="Beispiele anzeigen" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
+                    <div v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
+                        <div class="row" :style="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions) ? 'border: 1px solid red' : ''">
+                            <label :for="'dropdowngeneral' + question.id.split(' ').join('')" class="four columns question">
+                                <span class="only-screenreader" v-if="saveAttempted && !entryUtil.isAnswerValid(newEntry, question.id, questions)">(nicht beantwortet)</span>
+                                <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
+                            </label>
+                            <select class="six columns answer-select" @change="chooseAnswer(question, $event)" v-model="newEntry.answers[question.id].answerId" :id="'dropdowngeneral' + question.id.split(' ').join('')">
+                                <option value="" disabled selected hidden>Antwort auswählen</option>
+                                <option :value="constants.ANSWER_NOT_APPLICABLE">nicht zutreffend</option>
+                                <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
+                            </select>
+                            <div class="two columns">
+                                <button title="Kommentar zu Antwort hinzufügen" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
+                                <button v-show="hasExamples(question)" title="Beispiele anzeigen" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
+                            </div>
+                        </div>
+                        <div class="row" v-if="showExamples === question.id" style="margin-bottom: 1.5em; display: block">
+                            <label for="questionExamplesGeneral">Beispiele für Antwortmöglichkeiten für Frage {{util.getQuestionNumber(question)}}</label>
+                            <div id="questionExamplesGeneral" v-for="possibleAnswer in question.possibleAnswers" v-if="possibleAnswer.examples">
+                                <label class="question-example-label" :for="'examples' + util.getQuestionNumber(question)">Beispiele für Antwort: <span>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</span></label>
+                                <ul :id="'examples' + util.getQuestionNumber(question)" style="list-style-type: circle">
+                                    <li v-for="example in possibleAnswer.examples" style="padding-left: 1.5em">{{example.text}}</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
