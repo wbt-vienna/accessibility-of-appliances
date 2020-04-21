@@ -3,6 +3,7 @@ import {databaseService} from "./databaseService";
 import {constants} from "../../util/constants";
 import {Entry} from "../../model/Entry";
 import {Question} from "../../model/Question";
+import {Comments} from "../../model/Comments";
 
 let dataService = {};
 let cache = {};
@@ -33,6 +34,26 @@ dataService.getQuestion = function (id) {
 
 dataService.saveQuestion = function (q) {
     return saveObject(Question, q);
+};
+
+dataService.getComments = function () {
+    return getObject(Comments, constants.COMMENTS_OBJECT_ID).then(commentsObject => {
+        if (!commentsObject) {
+            return Promise.resolve([]);
+        }
+        return Promise.resolve(commentsObject.comments);
+    });
+};
+
+dataService.saveComments = function (comments) {
+    comments = comments || [];
+    return getObject(Comments, constants.COMMENTS_OBJECT_ID).then(commentsObject => {
+        if (!commentsObject) {
+            commentsObject = new Comments();
+        }
+        commentsObject.comments = comments;
+        return saveObject(Comments, commentsObject);
+    });
 };
 
 dataService.remove = function(id) {
