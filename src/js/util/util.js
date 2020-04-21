@@ -61,7 +61,7 @@ util.throttle = function (fn, args, minPauseMs, key) {
 };
 
 util.getQuestionNumber = function (question) {
-    if (!question || !question.id) {
+    if (!question || !question.id || !question.label) {
         return '';
     }
     return question.label;
