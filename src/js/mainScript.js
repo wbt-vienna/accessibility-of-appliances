@@ -6,6 +6,7 @@ import LoginView from '../vue-components/loginView.vue'
 import SearchView from '../vue-components/newSearchView.vue'
 import ShowView from "../vue-components/showView.vue"
 import ScoreView from "../vue-components/scoreView.vue";
+import DiscussionView from "../vue-components/discussionView.vue";
 import * as log from 'loglevel';
 import {databaseService} from "./service/data/databaseService";
 import {localStorageService} from "./service/data/localStorageService";
@@ -22,6 +23,7 @@ function init() {
         {path: '/edit/:id', component: NewView},
         {path: '/view/:id', component: ShowView},
         {path: '/info', component: ScoreView},
+        {path: '/discussion', component: DiscussionView},
         {path: '*', redirect: '/list'}
     ];
 
