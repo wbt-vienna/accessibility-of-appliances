@@ -47,8 +47,6 @@
         data() {
             return {
                 questions: null,
-                entry: null,
-                initialized: false,
                 constants: constants,
                 entryUtil: entryUtil,
                 util: util
@@ -67,14 +65,6 @@
             }
         },
         methods: {
-            getTextAnswer(question) {
-                let possibleAnswer = question.possibleAnswers.filter(a => a.id === thiz.entry.answers[question.id].answerId)[0];
-                if (possibleAnswer) {
-                    return `${possibleAnswer.percentage} % - ${possibleAnswer.text}`;
-                } else {
-                    return 'nicht zutreffend';
-                }
-            }
         },
         mounted() {
             thiz = this;
