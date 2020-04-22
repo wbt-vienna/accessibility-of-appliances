@@ -6,30 +6,27 @@
         <div class="row">
             <p>Die Bewertung eines Geräts wird in Prozent angegeben und hängt von den ausgewählten Antworten zu den jeweiligen Fragen ab. Die Punktevergabe für jede einzelne Frage ist abhängig von ihrer Wichtigkeit und Relevanz bezüglich Barrierefreiheit und Nutzbarkeit des Haushaltsgeräts. Dafür hat jede Frage ein individuelles Gewicht in Form von Punkten (0-3 Punkte). Zusätzlich ist zu jeder Frage für jede einzelne Zielgruppe ein individuelles Gewicht in Form von Punkten (0-3 Punkte) vorgesehen. Das resultierende Gewicht für die Zielgruppen je Frage ergibt sich aus dem Produkt des Gewichts der Frage und dem individuellen Gewicht der jeweiligen Zielgruppe. </p>
         </div>
-        <h2>Gewichtung der Fragen</h2>
-        <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
-                <h3>Fragen zu "{{type | translate}}"</h3>
-                <div v-for="question in categoryQuestions">
-                    <label :for="'question' + question.id.split(' ').join('')" class="row" >
-                        <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
-                    </label>
-                    <label for="weight" style="text-indent:30px" > Gewichtung: </label>
-                    <div class="row" id="weight" style="text-indent:30px">
-                        <span>Frage = {{question.weight}}</span>
+        <h2>Gewichtungen der Fragen</h2>
+        <div>Nachfolgend werden für alle Fragen die Gewichtungen aufgelistet. Diese können auch unter <router-link to="/discussion">Diskussion</router-link> diskutiert werden.</div>
+        <div v-for="(categoryQuestions, type) in categorizedQuestions">
+            <h3>Fragen zu "{{type | translate}}"</h3>
+            <ul>
+                <li v-for="question in categoryQuestions">
+                    <span style="font-weight: bold">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
+                    <div id="weightsContainer">
+                        <label for="weights" style="font-weight: normal; font-style: italic"> Gewichtungen: </label>
+                        <ul id="weights" style="margin: 0">
+                            <li>
+                                <span>Gesamt = {{question.weight}}</span>
+                            </li>
+                            <li v-for="targetgroup in constants.TARGETGROUPS">
+                                <span>{{targetgroup | translate}} = {{question.weightPerGroup[targetgroup]}}</span>
+                            </li>
+                        </ul>
+                        <a :href="'/#/discussion/' + question.id" target="_blank">Zur Diskussion dieser Frage (in neuem Tab)</a>
                     </div>
-                    <div class="row" style="text-indent:30px">
-                        <span>Visuell eingeschränkt = {{question.weightPerGroup.TARGETGROUP_VISUAL_IMPAIRMENT}}</span>
-                    </div>
-                    <div class="row" style="text-indent:30px">
-                        <span>Kognitiv eingeschränkt = {{question.weightPerGroup.TARGETGROUP_COGNITIVE_IMPAIRMENT}}</span>
-                    </div>
-                    <div class="row" style="text-indent:30px">
-                        <span>Motorisch eingeschränkt = {{question.weightPerGroup.TARGETGROUP_MOTOR_IMPAIRMENT}}</span>
-                    </div>
-                    <div class="row" style="text-indent:30px">
-                        <span>Blind = {{question.weightPerGroup.TARGETGROUP_BLIND}}</span>
-                    </div>
-                </div>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -89,14 +86,16 @@
             align-items: center;
         }
 
-        .question {
-            font-weight: normal;
+        #weightsContainer {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
         }
     }
 
     @media (max-width: 550px) {
-        .question {
-            font-weight: bold;
+        #weightsContainer {
+            margin-left: 0;
+            margin-bottom: 1em;
         }
     }
 
