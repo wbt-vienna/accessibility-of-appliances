@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <h2>Diskussion einzelner Fragen</h2>
+        <h2>Diskussion von Fragen</h2>
         <p>Auf dieser Seite können einzelne Fragen und Antworten kommentiert und diskutiert werden. Wählen Sie die anzuzeigende Frage oder einen der letzten Diskussionsbeiträge.</p>
         <h3>Frage auswählen</h3>
         <div class="row">
