@@ -12,14 +12,14 @@
         </div>
         <div class="row">
             <label for="selectQuestion" class="three columns">Frage</label>
-            <select id="selectQuestion" class="eight columns">
+            <select id="selectQuestion" class="eight columns" v-model="selectedQuestionId">
                 <option v-for="question in filteredQuestions" :value="question.id">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</option>
             </select>
         </div>
         <div class="row">
-            <button class="eight columns offset-by-three">Diskussion zu dieser Frage anzeigen</button>
+            <button class="eight columns offset-by-three" @click="$router.push('/discussion/' + selectedQuestionId)"><i aria-hidden="true" class="fas fa-comment"/> Diskussion zu dieser Frage anzeigen</button>
         </div>
-        <h3>Letzte Diskussionsbeiträge</h3>
+        <h3>Neueste Diskussionsbeiträge</h3>
 
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="five columns">Frage</span>
@@ -42,7 +42,7 @@
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">
-                        <button title="Zur Diskussion" @click=""><i aria-hidden="true" class="fas fa-eye"/></button>
+                        <button title="Zur Diskussion" @click="$router.push('/discussion/' + comment.questionId)"><i aria-hidden="true" class="fas fa-comment"/></button>
                     </div>
                 </div>
             </li>
@@ -52,11 +52,11 @@
 </template>
 
 <script>
+    import $ from 'jquery';
     import {dataService} from "../js/service/data/dataService";
     import {constants} from "../js/util/constants";
     import {entryUtil} from "../js/util/entryUtil";
     import {util} from "../js/util/util";
-    import {Comment} from "../js/model/Comment";
 
     let thiz = null;
     export default {
@@ -65,6 +65,7 @@
             return {
                 questions: null,
                 filteredQuestions: null,
+                selectedQuestionId: null,
                 comments: null,
                 selectedType: '',
                 constants: constants,
@@ -107,22 +108,36 @@
                     return;
                 }
                 this.filteredQuestions = this.questions.filter(q => q.category === this.selectedType);
+                this.selectedQuestionId = this.filteredQuestions[0].id;
             },
             getQuestionText(comment) {
                 let question = this.questions.filter(q => q.id === comment.questionId)[0];
                 return util.getQuestionNumber(question) + ' ' +question.question.de;
+            },
+            reloadFn(event, doc) {
+                if (doc.id === constants.COMMENTS_OBJECT_ID) {
+                    log.info('updated comments from remote database.');
+                    this.comments = JSON.parse(JSON.stringify(doc)).comments;
+                }
             }
+        },
+        created() {
+            $(document).on(constants.EVENT_DB_PULL_UPDATED, this.reloadFn);
         },
         mounted() {
             thiz = this;
             dataService.getQuestions().then(questions => {
                 thiz.questions = JSON.parse(JSON.stringify(questions));
                 thiz.filteredQuestions = thiz.questions;
+                thiz.selectedQuestionId = thiz.filteredQuestions[0].id;
                 dataService.getComments().then(comments => {
                     thiz.comments = JSON.parse(JSON.stringify(comments));
                 });
             });
         },
+        beforeDestroy() {
+            $(document).off(constants.EVENT_DB_PULL_UPDATED, this.reloadFn);
+        }
     }
 </script>
 
@@ -148,6 +163,15 @@
     @media (max-width: 550px) {
         .question {
             font-weight: bold;
+        }
+
+        ul li {
+            border: 1px solid gray;
+        }
+
+        ul li button {
+            padding: 0 1em;
+            margin: 5px;
         }
     }
 
