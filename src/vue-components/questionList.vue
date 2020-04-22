@@ -14,11 +14,12 @@
                 </select>
                 <div class="two columns">
                     <button title="Kommentar zu Antwort hinzufügen" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
-                    <button v-show="hasExamples(question)" :title="showExamples === question.id ? 'Beispiele ausblenden' : 'Beispiele anzeigen'" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
+                    <button :title="showExamples === question.id ? 'Weitere Infos zu dieser Frage ausblenden' : 'Weitere Infos zu dieser Frage anzeigen'" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
                 </div>
             </div>
             <div class="row examples" v-if="showExamples === question.id" style="margin-bottom: 1.5em; display: block">
-                <label for="questionExamples">Beispiele für Antwortmöglichkeiten für Frage {{util.getQuestionNumber(question)}}</label>
+                <div v-if="!hasExamples(question)">(keine Beispiele für Antwortmöglichkeiten für diese Frage)</div>
+                <label for="questionExamples" v-if="hasExamples(question)">Beispiele für Antwortmöglichkeiten für Frage {{util.getQuestionNumber(question)}}</label>
                 <div id="notApplicableExamples" v-if="question.examplesNotApplicable">
                     <label class="question-example-label" :for="'notApplicableEx' + util.getQuestionNumber(question)">Beispiele für Antwort: nicht zutreffend <span></span></label>
                     <ul :id="'notApplicableEx' + util.getQuestionNumber(question)" style="list-style-type: circle">
@@ -31,6 +32,7 @@
                         <li v-for="example in possibleAnswer.examples" style="padding-left: 1.5em">{{example.text}}</li>
                     </ul>
                 </div>
+                <a :href="'/#/discussion/' + question.id" target="_blank">Zur Diskussion dieser Frage (in neuem Tab)</a>
             </div>
         </div>
     </div>
@@ -71,7 +73,7 @@
                 }
             },
             hasExamples(question) {
-                if (question.examplesNotApplicable) {
+                if (question.examplesNotApplicable && question.examplesNotApplicable.length > 0) {
                     return true;
                 }
                 return question.possibleAnswers.reduce((total, possibleAnswer) => {
