@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper" v-if="comments && question">
         <h2>Diskussion zu Frage {{util.getQuestionNumber(question)}}</h2>
-        <router-link to="/discussion">Zurück zur Auswahl der Fragen</router-link>
+        <router-link to="/discussion">Zurück zur Übersicht aller Fragen</router-link>
         <h3>Info zur Frage</h3>
         <div class="row">
             <label for="qText" class="three columns">Frage</label>
@@ -16,21 +16,25 @@
             <div class="seven columns" style="order: 1">
                 <ul id="possibleAnswers">
                     <li>
-                        <div>nicht zutreffend</div>
+                        <div style="font-weight: bold">nicht zutreffend</div>
                         <label for="exampleList1" v-if="question.examplesNotApplicable && showExamples" style="font-weight: normal; font-style: italic">Beispiele:</label>
-                        <ul id="exampleList1" v-if="question.examplesNotApplicable && showExamples">
+                        <ul id="exampleList1" v-if="question.examplesNotApplicable && showExamples" style="margin-bottom: 2em">
                             <li v-for="example in question.examplesNotApplicable">{{example.text}}</li>
                         </ul>
                     </li>
                     <li v-for="possibleAnswer in question.possibleAnswers" style="margin-bottom: 1em">
-                        <div>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</div>
+                        <div style="font-weight: bold">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</div>
                         <label for="exampleList" v-if="possibleAnswer.examples && showExamples" style="font-weight: normal; font-style: italic">Beispiele:</label>
-                        <ul id="exampleList" v-if="possibleAnswer.examples && showExamples">
+                        <ul id="exampleList" v-if="possibleAnswer.examples && showExamples" style="margin-bottom: 2em">
                             <li v-for="example in possibleAnswer.examples">{{example.text}}</li>
                         </ul>
                     </li>
                 </ul>
             </div>
+        </div>
+        <div class="row">
+            <label for="weights" class="three columns">Gewichtungen (Gesamt / visuell / blind / motorisch / kognitiv)</label>
+            <span id="weights" class="eight columns">{{question.weight}} / {{question.weightPerGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT]}} / {{question.weightPerGroup[constants.TARGETGROUP_BLIND]}} / {{question.weightPerGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT]}} / {{question.weightPerGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT]}} </span>
         </div>
 
         <h3>Diskussionsbeiträge</h3>
@@ -64,6 +68,7 @@
             </li>
         </ul>
         <div class="row" v-if="comments.length === 0">(keine Kommentare)</div>
+        <router-link to="/discussion">Zurück zur Übersicht aller Fragen</router-link>
     </div>
 </template>
 
