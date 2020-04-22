@@ -9,6 +9,7 @@ class Question extends ObjectModel({
     category: String,
     question: TranslatableText,
     possibleAnswers: ArrayModel(PossibleAnswer),
+    examplesNotApplicable: ArrayModel(Object), // Array of Objects containing .text property
     weight: Number,
     weightPerGroup: [Object] // [TargetgroupID -> Number] -> weight (importance) for target group
 }) {
