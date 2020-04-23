@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper" v-if="comments && question">
         <h2>Diskussion zu Frage {{util.getQuestionNumber(question)}}</h2>
-        <router-link to="/discussion">Zurück zur Übersicht aller Fragen</router-link>
+        <router-link to="/discussion">Zur Diskussions-Übersicht aller Fragen</router-link>
         <h3>Info zur Frage</h3>
         <div class="row">
             <label for="qText" class="three columns">Frage</label>
@@ -33,8 +33,14 @@
             </div>
         </div>
         <div class="row">
-            <label for="weights" class="three columns">Gewichtungen (Gesamt / visuell / blind / motorisch / kognitiv)</label>
-            <span id="weights" class="eight columns">{{question.weight}} / {{question.weightPerGroup[constants.TARGETGROUP_VISUAL_IMPAIRMENT]}} / {{question.weightPerGroup[constants.TARGETGROUP_BLIND]}} / {{question.weightPerGroup[constants.TARGETGROUP_MOTOR_IMPAIRMENT]}} / {{question.weightPerGroup[constants.TARGETGROUP_COGNITIVE_IMPAIRMENT]}} </span>
+            <label for="weights" class="three columns"><span>Gewichtungen<span aria-hidden="true">&nbsp;(Gesamt / visuell / blind / motorisch / kognitiv)</span></span></label>
+            <span id="weights" class="eight columns">
+                <ul>
+                    <li><span class="only-screenreader">Gesamtgewichtung: </span>{{question.weight}}<span aria-hidden="true">&nbsp;/</span></li><li v-for="(targetgroup, index) in constants.TARGETGROUPS">
+                        <span class="only-screenreader">Gewichtung für {{targetgroup | translate}}: </span>&nbsp;{{question.weightPerGroup[targetgroup]}}<span v-if="index < constants.TARGETGROUPS.length - 1" aria-hidden="true">&nbsp;/</span>
+                    </li>
+                </ul>
+            </span>
         </div>
 
         <h3>Diskussionsbeiträge</h3>
@@ -68,7 +74,7 @@
             </li>
         </ul>
         <div class="row" v-if="comments.length === 0">(keine Kommentare)</div>
-        <router-link to="/discussion">Zurück zur Übersicht aller Fragen</router-link>
+        <router-link to="/discussion">Zur Diskussions-Übersicht aller Fragen</router-link>
     </div>
 </template>
 
@@ -187,4 +193,7 @@
         padding: 0 0.5em;
     }
 
+    #weights ul li {
+        display: inline-block;
+    }
 </style>
