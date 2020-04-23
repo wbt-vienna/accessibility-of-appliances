@@ -26,7 +26,7 @@ function init() {
         {path: '/info', component: ScoreView},
         {path: '/discussion', component: DiscussionView},
         {path: '/discussion/:questionid', component: DiscussionSingleView},
-        {path: '*', redirect: '/list'}
+        {path: '*', redirect: '/info'}
     ];
 
     let router = new VueRouter({
