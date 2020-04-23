@@ -5,7 +5,7 @@ import ListView from '../vue-components/listView.vue'
 import LoginView from '../vue-components/loginView.vue'
 import SearchView from '../vue-components/newSearchView.vue'
 import ShowView from "../vue-components/showView.vue"
-import ScoreView from "../vue-components/scoreView.vue";
+import InfoView from "../vue-components/infoView.vue";
 import DiscussionView from "../vue-components/discussionView.vue";
 import DiscussionSingleView from "../vue-components/discussionSingleView.vue";
 import * as log from 'loglevel';
@@ -23,7 +23,7 @@ function init() {
         {path: '/login', component: LoginView},
         {path: '/edit/:id', component: NewView},
         {path: '/view/:id', component: ShowView},
-        {path: '/info', component: ScoreView},
+        {path: '/info', component: InfoView},
         {path: '/discussion', component: DiscussionView},
         {path: '/discussion/:questionid', component: DiscussionSingleView},
         {path: '*', redirect: '/info'}
