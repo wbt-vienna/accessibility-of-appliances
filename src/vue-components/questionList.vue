@@ -13,7 +13,7 @@
                     <option v-for="possibleAnswer in question.possibleAnswers" :value="possibleAnswer.id">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</option>
                 </select>
                 <div class="two columns">
-                    <button title="Kommentar zu Antwort hinzufügen" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
+                    <button title="Kommentar zu Antwort hinzufügen (springt zu einem Textfeld am Ende des Fragebogens)" class="answerButton" @click="addComment(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-comment"/></button>
                     <button :title="showExamples === question.id ? 'Weitere Infos zu dieser Frage ausblenden' : 'Weitere Infos zu dieser Frage anzeigen'" class="answerButton" @click="showExamplesFor(question)"><i aria-hidden="true" style="display: inline-block" class="fas fa-info"/></button>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         <li v-for="example in possibleAnswer.examples" style="padding-left: 1.5em">{{example.text}}</li>
                     </ul>
                 </div>
-                <a :href="'/#/discussion/' + question.id" target="_blank">Zur Diskussion dieser Frage (in neuem Tab)</a>
+                <router-link :to="'/discussion/' + question.id" target='_blank'>Zur Diskussion dieser Frage (in neuem Tab)</router-link>
             </div>
         </div>
     </div>
