@@ -1,32 +1,37 @@
 <template>
     <div class="wrapper">
-        <h2>Generelle Informationen</h2>
-            <p>Diese Website dient als Grundlage zur Bewertung von Haushaltsgeräten auf Barrierefreiheit. Es können neue Haushaltsgeräte unter "neues Gerät" bewertet werden oder die Beurteilung bereits bewertete Haushaltsgeräte in einer gesammelten Liste angesehen werden. Es wird kein Login zur Bewertung oder der Einsicht von Haushaltsgeräten benötigt. Die einzelnen Fragen des Bewertungsbogens wurden anhand bereits bestehender Richtlinien, als auch aus genannten notwendigen Kriterien von Betroffenen, erstellt. Die Website-Links der einzelnen Geräte führen zu Geizhals.at, wo die Verfügbarkeit und der Preis sofort ermittelt werden kann.</p>
-        <h2>Informationen zur Gerätebewertung</h2>
-        <div class="row">
-            <p>Die Bewertung eines Geräts wird in Prozent angegeben und hängt von den ausgewählten Antworten zu den jeweiligen Fragen ab. Die Punktevergabe für jede einzelne Frage ist abhängig von ihrer Wichtigkeit und Relevanz bezüglich Barrierefreiheit und Nutzbarkeit des Haushaltsgeräts. Dafür hat jede Frage ein individuelles Gewicht in Form von Punkten (0-3 Punkte). Zusätzlich ist zu jeder Frage für jede einzelne Zielgruppe ein individuelles Gewicht in Form von Punkten (0-3 Punkte) vorgesehen. Das resultierende Gewicht für die Zielgruppen je Frage ergibt sich aus dem Produkt des Gewichts der Frage und dem individuellen Gewicht der jeweiligen Zielgruppe. </p>
-        </div>
-        <h2>Gewichtungen der Fragen</h2>
-        <div>Nachfolgend werden für alle Fragen die Gewichtungen aufgelistet. Diese können auch unter <router-link to="/discussion">Diskussion</router-link> diskutiert werden.</div>
-        <div v-for="(categoryQuestions, type) in categorizedQuestions">
-            <h3>Fragen zu "{{type | translate}}"</h3>
-            <ul>
-                <li v-for="question in categoryQuestions">
-                    <span style="font-weight: bold">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
-                    <div id="weightsContainer">
-                        <label for="weights" style="font-weight: normal; font-style: italic"> Gewichtungen: </label>
-                        <ul id="weights" style="margin: 0">
-                            <li>
-                                <span>Gesamt = {{question.weight}}</span>
-                            </li>
-                            <li v-for="targetgroup in constants.TARGETGROUPS">
-                                <span>{{targetgroup | translate}} = {{question.weightPerGroup[targetgroup]}}</span>
-                            </li>
-                        </ul>
-                        <a :href="'/#/discussion/' + question.id" target="_blank">Zur Diskussion dieser Frage (in neuem Tab)</a>
-                    </div>
-                </li>
-            </ul>
+        <h2>Über diese Website</h2>
+        <p>Diese Website dient zur Bewertung der Barrierefreiheit von Haushaltsgeräten. Sie wird an der <a href="https://www.technikum-wien.at/" target="_blank">FH Technikum Wien</a> in Zusammenarbeit mit Studierenden und internationalen ExpertInnen entwickelt und befindet sich derzeit in einer Testphase zur Integration von Verbesserungsvorschlägen. Ziel ist es, einfache und zugleich aussagekräftige Indikatoren für die barrierefreie Verwendbarkeit verschiedener Haushaltsgeräte zu gewinnen und öffentlich verfügbar zu machen. Neben einer allgemeinen Kennzahl für die Barrierefreiheit des Gerätes kann die Bewertung auch spezifisch für verschiedene Zielgruppen angezeigt werden, um Aufschluss zu erhalten, ob ein Gerät etwa für blinde Menschen oder für Menschen mit motorischen Einschränkungen gut verwendbar ist. Wir möchten mit der Checkliste eine Hilfestellung für die Auswahl von Produkten bieten, da Geräte, die für alle Menschen möglichst einfach verwendbar sind, im Zeitalter von Touchscreens und komplexer Menüführung selten geworden sind.</p>
+        <h2>Funktionen und Menüpunkte </h2>
+        <h3>Erfasste Geräte</h3>
+        <p>Unter dem Menüpunkt <router-link to="/list">Erfasste Geräte</router-link> können Bewertungen bereits eingetragener Geräte angesehen werden. Im Feld "Freitextsuche" kann ein Suchbegriff eingegeben werden, der auf die Produktbezeichnung angewendet wird (hier können z.B. Teile des Markennames oder der Typenbezeichnung eingegeben werden). Die Suchergebnisse werden während der Eingabe laufend aktualisiert. Durch das Auswahlfeld "Kategorie" ist es möglich, die Suche auf bestimmte Gerätekategorien (z.B. Waschmaschinen) einzugrenzen. Das Auswahlfeld "Zielgruppe" ermöglicht es, die Bewertungsergebnisse auf eine bestimmte Zielgruppe anzupassen (z.B. visuell eingeschränkte Personen). Falls keine Zielgruppe ausgewählt wird, wird die Gesamtbewertung der Produkte angezeigt. In der Ergebnisliste der Suche werden die Produktbezeichnungen als Links zur Preisvergleichsplattform "Geizhals.at" dargestellt, zusammen mit der Bewertung und einem Button, der zur Detailansicht der Bewertung des Produktes führt. </p>
+        <h3>Neues Gerät</h3>
+        <p>Unter dem Menüpunkt <router-link to="/new">Neues Gerät</router-link> können Geräte erfasst werden. Hierbei erfolgt zuerst die Auswahl des Gerätes über eine Produktsuche in der Datenbank von "Geizhals.at" - einer umfassenden Sammlung der aktuell am Markt erhältlichen Geräte: Im Feld "Produktsuche" können Begriffe wie Gerätetyp, Hersteller, oder konkrete Typenbezeichnungen eingegeben werden. Die Ergebnisliste wird laufend aktualisiert. Über die Links in der Ergebnisliste kann direkt die Produktseite bei Geizhals aufgerufen werden, wo Produkt- und Preisinformationen verfügbar sind. Nachdem das gewünschte Gerät durch den Button "Wählen" selektiert wurde, können einige allgemeine Angaben zum Gerät gemacht werden, welche die Zusammenstellung des Fragebogens beeinflussen (etwa ob das Gerät Signaltöne oder Displays zur Interaktion bietet). Danach erscheinen die einzelnen Fragen. Die Beantwortung erfolgt durch zur Selektion einer Antwortmöglichkeit aus der Auswahlbox. Bei jeder Frage besteht durch den Button "Kommentar" die Möglichkeit textuelle Zusatzinformationen zur gewählten Antwort hinzuzufügen. Über den "Info-Button" bei jeder Frage können Beispiele zu den einzelnen Antwortmöglichkeiten eingeblendet werden, welche die Verständlichkeit der Frage erleichtern. Außerdem kann man hier zur Diskussionsseite dieser Frage navigieren, auf der über die allgemeine Formulierung der Frage und der Antwortmöglichkeiten diskutiert werden kann. Am Ende des Fragebogens besteht die Möglichkeit, einen allgemeinen Kommentar zum Gerät zu hinterlassen. Der Eintrag eines neuen Gerätes wird durch Betätigung vom Button "Eintrag speichern" abgeschlossen.</p>
+        <h3>Diskussion</h3>
+        <p>Der Menüpunkt <router-link to="/discussion">Diskussion</router-link> bietet ein Forum zur mit Feedbackmöglichkeiten zur Gestaltung des Fragebogens bzw. zur Gewichtung der Checkliste. Nach der Auswahl einer bestimmten Frage und der Betätigung des Buttons "Diskussion anzeigen" werden die Kommentare und Bewertungskriterien sichtbar (siehe "Informationen zu den Bewertungskriterien" unten).</p>
+        <h3>Login</h3>
+        <p>Es wird kein Login zur Bewertung oder der Einsicht von Haushaltsgeräten benötigt. Der Menüpunkt <router-link to="/login">Login</router-link> ist lediglich für spezielle Funktionen wie das verifizieren neuer Einträge nötig.</p>
+        <h2>Informationen zu den Bewertungskriterien</h2>
+        <p>Die einzelnen Fragen des Bewertungsbogens wurden anhand bestehender Richtlinien für Barrierefreiheit bzw. aufgrund von Empfehlungen von ExpertInnen erstellt. Die Bewertung eines Geräts wird in Prozent angegeben (0-100), wobei 100% ein ideal barrierefreies Gerät auszeichnet, das multimodale Benutzerschnittstellen bietet und "Design-for-All" Kriterien entspricht.
+            Die Gewichtung einer Frage der Checkliste soll dessen Relevanz für eine barrierefreie Nutzbarkeit des Haushaltsgeräts reflektieren. Jeder Frage wird ein Gewicht von 0-3 Punkten zugeordnet (wobei 3 große Relevanz bedeutet). Zusätzlich ist jeder Frage pro Zielgruppe ein individuelles Gewicht von 0-3 Punkten zugeordnet. Das resultierende Gewicht für die Zielgruppe ergibt sich aus dem Produkt des Gewichts der Frage und dem individuellen Gewicht der Zielgruppe. Für eine Zielgruppe bedeutet also ein Wert von 0 keine Relevanz und ein Wert von 9 höchste Relevanz. Im Bewertungsergebnis werden die summierten Punkte auf einen Prozentwert normalisiert.</p>
+        <p>Eine optimale, objektive Bewertung der Barrierefreiheit verschiedenster Geräte wird wohl kaum jemals möglich sein. Umso wichtiger ist die Einsehbarkeit der Bewertungsschlüssel und Gewichtungen. Falls aufgrund von Verbesserungsvorschlägen die Schlüssel für die Bewertung geändert werden, werden die Ergebnisse für alle Produkte neu berechnet. Nach der Testphase sollten hier sinnvolle Bewertungsschlüssel erreicht sein, die beibehalten werden. Es ist uns bewusst, dass es spezielle Produkte oder Szenarien geben kann, wo das Ergebnis nicht repräsentativ ist. Das Diskussionsforum und das Freitextfeld beim Produkteintrag bieten Möglichkeiten, um auf Probleme bzw. Ausnahmefälle hinzuweisen und Lösungsstrategien zu entwickeln.
+        </p>
+        <h2>Kontakt und Impressum</h2>
+        <p>
+            Wissenschaftliche Aufbereitung der Fragen und Ausarbeitung der Checkliste: Manuel Wagner<br/>
+            Technische Umsetzung und Unterstützung: Benjamin Klaus
+        </p>
+        <p>
+            Für Fragen und Anregungen zur Checkliste für Barrierefreie Technologien wenden Sie sich bitte an:<br/>
+            Christoph Veigl (Projektleitung Projekt Wissensdrehscheibe für Barrierefreie Technologien), FH Technikum Wien<br/>
+            E-Mail: <a href="mailto:christoph.veigl@technikum-wien.at">christoph.veigl@technikum-wien.at</a>
+        </p>
+        <p>
+            Das Projekt "Wissensdrehscheibe für Barrierefreie Technologien" wird von der Stadt Wien (MA23) unter der Projektnummer 26-02 finanziell unterstützt.
+        </p>
+        <div class="center">
+            <img height="150" src="app/img/ma23-gefoerdertvon.jpg" style="margin-right: 4em"/>
+            <img height="150" src="app/img/wbt_logo_V3_without_text_small.png"/>
         </div>
     </div>
 
@@ -73,39 +78,15 @@
 </script>
 
 <style scoped>
-    @media (min-width: 550px) {
-        .row {
-            display: flex;
-        }
-
-        .row > label {
-            display: flex;
-        }
-
-        .row > label.center {
-            align-items: center;
-        }
-
-        #weightsContainer {
-            margin-left: 1.5em;
-            margin-bottom: 1em;
-        }
+    .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
     }
 
-    @media (max-width: 550px) {
-        #weightsContainer {
-            margin-left: 0;
-            margin-bottom: 1em;
-        }
+    img {
+        margin-bottom: 2em;
+        margin-top: 2em;
     }
-
-    .row {
-        margin-bottom: 1em;
-    }
-
-    ul {
-        list-style-type: none;
-        margin-bottom: 0;
-    }
-
 </style>
