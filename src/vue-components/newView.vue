@@ -172,8 +172,11 @@
                 }, false)
             },
             save() {
-                thiz.saveAttempted = true;
+                thiz.saveAttempted = false;
                 if (!thiz.isValid) {
+                    setTimeout(() => { //in order to re-speak error message in screenreader
+                        thiz.saveAttempted = true;
+                    }, 200);
                     return;
                 }
                 localStorageService.saveUser(thiz.newEntry.updatedBy);
