@@ -29,7 +29,7 @@
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
             <span class="six columns">Titel</span>
             <span class="three columns">Bewertung</span>
-            <span v-if="isLoggedIn || (filteredEntries && filteredEntries.filter(e => e.pendingConfirmation).length > 0)" class="three columns">Aktionen</span>
+            <span class="three columns">Aktionen</span>
         </div>
         <span class="only-screenreader">Die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet.</span>
         <span class="only-screenreader">Die Liste ist absteigend nach Bewertung sortiert, beste Bewertung zuerst.</span>
