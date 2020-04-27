@@ -33,11 +33,12 @@
             </div>
         </div>
         <div class="row">
-            <label for="weights" class="three columns"><span>Gewichtungen<span aria-hidden="true">&nbsp;(Gesamt / visuell / blind / motorisch / kognitiv)</span></span></label>
+            <label for="weights" class="three columns">Gewichtungen</label>
             <span id="weights" class="eight columns">
                 <ul>
-                    <li><span class="only-screenreader">Gesamtgewichtung: </span>{{question.weight}}<span aria-hidden="true">&nbsp;/</span></li><li v-for="(targetgroup, index) in constants.TARGETGROUPS">
-                        <span class="only-screenreader">Gewichtung für {{targetgroup | translate}}: </span>&nbsp;{{question.weightPerGroup[targetgroup]}}<span v-if="index < constants.TARGETGROUPS.length - 1" aria-hidden="true">&nbsp;/</span>
+                    <li><span>Gesamtgewichtung der Frage: </span>{{question.weight}} von 3 Punkten</li>
+                    <li v-for="(targetgroup, index) in constants.TARGETGROUPS">
+                        <span>Gewichtung für {{targetgroup | translate}}:</span>&nbsp;{{question.weightPerGroup[targetgroup]}} von 3 Punkten
                     </li>
                 </ul>
             </span>
@@ -191,9 +192,5 @@
 
     button {
         padding: 0 0.5em;
-    }
-
-    #weights ul li {
-        display: inline-block;
     }
 </style>
