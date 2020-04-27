@@ -36,9 +36,9 @@
             <label for="weights" class="three columns">Gewichtungen</label>
             <span id="weights" class="eight columns">
                 <ul>
-                    <li><span>Gesamtgewichtung der Frage: </span>{{question.weight}} von 3 Punkten</li>
+                    <li><span>Gesamtgewichtung<span class="only-screenreader"> der Frage</span>: </span>{{question.weight}} von 3 Punkten</li>
                     <li v-for="(targetgroup, index) in constants.TARGETGROUPS">
-                        <span>Gewichtung für {{targetgroup | translate}}:</span>&nbsp;{{question.weightPerGroup[targetgroup]}} von 3 Punkten
+                        <span><span class="only-screenreader">Gewichtung für Zielgruppe </span>{{targetgroup | translate}}:</span>&nbsp;{{question.weightPerGroup[targetgroup]}} von 3 Punkten
                     </li>
                 </ul>
             </span>
