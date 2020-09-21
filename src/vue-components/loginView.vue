@@ -1,21 +1,23 @@
 <template>
-    <div style="margin-top: 2em">
+    <div>
         <div v-if="loggedIn">
             <span>Bereits eingeloggt!</span>
             <button @click="logout()">Ausloggen</button>
         </div>
-
         <div v-if="!loggedIn">
-            <label for="passwordField">Passwort: </label>
-            <input id="passwordField" type="password" v-model="password"/>
-            <div style="margin-top: 1.5em">
-                <input id="inSavePassword" type="checkbox" v-model="savePassword"/>
-                <label style="display: inline-block" for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
+            <div class="row">
+                <label class="col-sm-2 mr-1" for="passwordField">Passwort: </label>
+                <input class="col-sm-3 mr-1" id="passwordField" type="password" v-model="password"/>
+                <button class="col-sm-3 mr-1" @click="login">Login</button>
+                <span v-if="wrongPassword">Falsches Passwort!</span>
             </div>
-            <button @click="login">Login</button>
-            <span v-if="wrongPassword">Falsches Passwort!</span>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input class="mr-1" id="inSavePassword" type="checkbox" v-model="savePassword"/>
+                    <label for="inSavePassword">Passwort speichern und in Zukunft automatisch einloggen</label>
+                </div>
+            </div>
         </div>
-        <div style="margin: 3em 0">Zuletzt aktualisiert: 27.04.2020</div>
     </div>
 </template>
 

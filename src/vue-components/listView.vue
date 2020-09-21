@@ -2,52 +2,52 @@
     <div class="wrapper">
         <h2>Erfasste Geräte</h2>
         <h3>Filter</h3>
-        <div class="row">
+        <div>
             <p>Info: Filterkriterien (Freitextsuche oder Kategorie) werden bei Änderung sofort übernommen und die Liste der Geräte an die Filterkriterien angepasst.</p>
         </div>
         <div class="row">
-            <label for="inText" class="three columns">Freitextsuche</label>
-            <input id="inText" type="search" class="seven columns" style="height: 1.5em;" v-model="filterOptions.text" @input="filterChanged()"/>
+            <label for="inText" class="col-sm-3">Freitextsuche</label>
+            <input id="inText" type="search" class="col-sm-7" style="height: 1.5em;" v-model="filterOptions.text" @input="filterChanged()"/>
         </div>
         <div class="row">
-            <label for="category" class="three columns">Kategorie</label>
-            <select id="category" type="search" class="seven columns" @change="filterChanged()" v-model="filterOptions.category">
+            <label for="category" class="col-sm-3">Kategorie</label>
+            <select id="category" class="col-sm-7" @change="filterChanged()" v-model="filterOptions.category">
                 <option selected value="">alle Kategorien</option>
                 <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
                 <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
             </select>
         </div>
         <div class="row">
-            <label for="scoreType" class="three columns">Anzuzeigende Bewertung für Zielgruppe</label>
-            <select id="scoreType" type="search" class="seven columns" @change="filterChanged()" v-model="filterOptions.scoreType">
+            <label for="scoreType" class="col-sm-3">Anzuzeigende Bewertung für Zielgruppe</label>
+            <select id="scoreType" class="col-sm-7" @change="filterChanged()" v-model="filterOptions.scoreType">
                 <option selected value="">Gesamtbewertung</option>
                 <option v-for="targetGroupId in constants.TARGETGROUPS" :value="targetGroupId">{{targetGroupId | translate}}</option>
             </select>
         </div>
 
-        <h3>Liste der Einträge</h3>
+        <h3 style="margin-top: 2em">Liste der Einträge</h3>
         <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <span class="six columns">Titel</span>
-            <span class="three columns">Bewertung</span>
-            <span class="three columns">Aktionen</span>
+            <span class="col-sm-6">Titel</span>
+            <span class="col-sm-3">Bewertung</span>
+            <span class="col-sm-3">Aktionen</span>
         </div>
         <span class="only-screenreader">Die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet.</span>
         <span class="only-screenreader">Die Liste ist absteigend nach Bewertung sortiert, beste Bewertung zuerst.</span>
         <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul>
             <li v-for="entry in filteredEntries" class="row">
-                <div class="six columns">
+                <div class="col-sm-6">
                     <i v-if="entry.pendingConfirmation" class="fas fa-question-circle" title="nicht verifizierter Eintrag eines anonymen Users"></i>
                     <label for="link" class="show-mobile" aria-hidden="true">Bezeichnung: </label>
                     <label for="link" class="only-screenreader">Bezeichnung</label>
                     <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                 </div>
-                <div class="three columns">
+                <div class="col-sm-3">
                     <label class="show-mobile" aria-hidden="true" for="score">Bewertung: </label>
                     <label for="score" class="only-screenreader">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</label>
                     <div id="score" class="bewertung" style="display: inline-block; text-align: left">{{filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)}} %</div>
                 </div>
-                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="three columns">
+                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-sm-3">
                     <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" style="display: inline-block">

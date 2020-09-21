@@ -29,10 +29,6 @@
         <p>
             Das Projekt "Wissensdrehscheibe für Barrierefreie Technologien" wird von der Stadt Wien (MA23) unter der Projektnummer 26-02 finanziell unterstützt.
         </p>
-        <div class="center">
-            <img height="150" src="app/img/ma23-gefoerdertvon.jpg" style="margin-right: 4em" alt="Logo MA23 Stadt Wien"/>
-            <img height="150" src="app/img/wbt_logo_V3_without_text_small.png" alt="Logo Projekt Wissensdrehscheibe für barrierefreie Technologien"/>
-        </div>
     </div>
 
 </template>
