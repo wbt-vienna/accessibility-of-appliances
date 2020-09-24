@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="container">
         <h2>Über diese Website</h2>
         <p>Diese Website dient zur Bewertung der Barrierefreiheit von Haushaltsgeräten. Sie wird an der <a href="https://www.technikum-wien.at/" target="_blank">FH Technikum Wien</a> in Zusammenarbeit mit Studierenden und internationalen ExpertInnen entwickelt und befindet sich derzeit in einer Testphase zur Integration von Verbesserungsvorschlägen. Ziel ist es, einfache und zugleich aussagekräftige Indikatoren für die barrierefreie Verwendbarkeit verschiedener Haushaltsgeräte zu gewinnen und öffentlich verfügbar zu machen. Neben einer allgemeinen Kennzahl für die Barrierefreiheit des Gerätes kann die Bewertung auch spezifisch für verschiedene Zielgruppen angezeigt werden, um Aufschluss zu erhalten, ob ein Gerät etwa für blinde Menschen oder für Menschen mit motorischen Einschränkungen gut verwendbar ist. Wir möchten mit der Checkliste eine Hilfestellung für die Auswahl von Produkten bieten, da Geräte, die für alle Menschen möglichst einfach verwendbar sind, im Zeitalter von <span lang="en">Touchscreens</span> und komplexer Menüführung selten geworden sind.</p>
         <h2>Funktionen und Menüpunkte </h2>

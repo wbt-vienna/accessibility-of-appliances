@@ -5,29 +5,23 @@ html, body {
 body {
     font-family: 'Open Sans', sans-serif !important;
     display: flex;
-    flex-direction: column;
 }
 
-*:focus {
+.main-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.container {
+    max-width: 1170px !important;
+    margin: auto !important;
+}
+
+*:focus, header a:focus img {
     outline: none !important;
     box-shadow: 0 0 3pt 2pt orange !important;
-}
-
-.content {
-    flex: 1 0 auto;
-}
-
-.own-container {
-    padding-left: 1em;
-    padding-right: 1em;
-    max-width: 1170px;
-    margin: auto;
-}
-
-header {
-    padding: 5px;
-    min-height: 70px;
-    margin-bottom: 1em;
 }
 
 h2, h3, h4 {
@@ -45,101 +39,30 @@ h4 {
     font-weight: normal;
 }
 
-label {
-    font-weight: bold;
-}
-
-header img {
-    max-height: 70px;
-    display: inline-block;
-}
-
-header.own-container {
-    display: flex;
-}
-
-.header-links {
-    display: flex;
-    align-items: center;
-}
-
-.header-links a {
-    margin-right: 1.2em;
-    color: #000;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-@media (max-width: 768px) {
-    header.own-container {
-        display: block;
-    }
-    .header-links {
-        margin: 0.5em 0;
-    }
-    .header-links a {
-        margin-right: 0.5em;
-    }
-}
-
-@media (min-width: 768px) {
-    header a.first-link {
-        margin-left: 8em;
-    }
-}
-
-main {
-    border-top: 1px solid whitesmoke;
-    padding-top: 1em;
-    padding-bottom: 5em;
-}
-
 .row {
     margin-bottom: 1em;
-}
-
-footer .row {
-    margin-bottom: 2em;
-}
-
-.tagButton {
-    border: none !important;
 }
 
 button {
     cursor: pointer;
 }
 
-footer {
-    flex-shrink: 0;
-    width: 100%;
-    background-color: #333333;
-    color: #c4c4c4;
-    font-size: 16px;
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
 }
 
-.footer-content {
-    padding: 2em 0;
-    height: 100%;
+.btn-primary:hover, .btn-primary:focus {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
 }
 
-footer a, footer a:hover {
-    color: #c4c4c4;
-    font-size: 16px;
-    line-height: 1.42857143;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-footer li {
-    padding: 0 15px 5px 0;
-    margin-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.btn-primary[disabled] {
+    color: #fff;
+    background-color: #868e9b;
+    border-color: #204d74;
 }
 
 .only-screenreader {

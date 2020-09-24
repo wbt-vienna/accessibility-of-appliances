@@ -12,6 +12,7 @@ import * as log from 'loglevel';
 import {databaseService} from "./service/data/databaseService";
 import {localStorageService} from "./service/data/localStorageService";
 import {i18nService} from "./service/i18nService";
+import VueMain from "../vue-components/vue-main.vue";
 
 function init() {
     window.log = log;
@@ -62,7 +63,19 @@ function init() {
 
     Vue.use(VueRouter);
     let app = new Vue({
-        router
+        router: router,
+        data: function () {
+            return {
+                linkList: [
+                    {name: 'Startseite', to: '/info'},
+                    {name: 'Geräte', to: '/list'},
+                    {name: 'Neu', to: '/new'},
+                    {name: 'Diskussion', to: '/discussion'},
+                    {name: 'Login', to: '/login'},
+                ]
+            }
+        },
+        components: {VueMain}
     }).$mount('#app');
 }
 init();
