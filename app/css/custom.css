@@ -65,6 +65,10 @@ button {
     border-color: #204d74;
 }
 
+label {
+    font-weight: bold;
+}
+
 .only-screenreader {
     position: absolute;
     left: -9999px;
