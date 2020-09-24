@@ -1,48 +1,47 @@
 <template>
-    <div class="wrapper">
+    <div class="container">
         <h2>Diskussion von Fragen</h2>
         <p>Auf dieser Seite können einzelne Fragen und Antworten kommentiert und diskutiert werden. Wählen Sie die anzuzeigende Frage oder einen der letzten Diskussionsbeiträge.</p>
         <h3>Frage auswählen</h3>
-        <div class="row">
-            <label for="selectType" class="three columns">Kategorie der Frage</label>
-            <select id="selectType" class="eight columns" @change="filterQuestions" v-model="selectedType">
+        <div class="form-group">
+            <label for="selectType">Kategorie der Frage</label>
+            <select id="selectType" class="form-control" @change="filterQuestions" v-model="selectedType">
                 <option value="">Alle Kategorien</option>
                 <option v-for="type in constants.ALL_TYPES" :value="type">{{type | translate}}</option>
             </select>
         </div>
-        <div class="row">
-            <label for="selectQuestion" class="three columns">Frage</label>
-            <select id="selectQuestion" class="eight columns" v-model="selectedQuestionId">
+        <div class="form-group">
+            <label for="selectQuestion">Frage</label>
+            <select id="selectQuestion" class="form-control" v-model="selectedQuestionId">
                 <option v-for="question in filteredQuestions" :value="question.id">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</option>
             </select>
         </div>
-        <div class="row">
-            <button class="eight columns offset-by-three" @click="$router.push('/discussion/' + selectedQuestionId)"><i aria-hidden="true" class="fas fa-comment"/> Diskussion zu dieser Frage anzeigen</button>
+        <div class="form-group">
+            <button class="form-control btn-primary" @click="$router.push('/discussion/' + selectedQuestionId)"><i aria-hidden="true" class="fas fa-comment"/> Diskussion zu dieser Frage anzeigen</button>
         </div>
-        <h3>Neueste Diskussionsbeiträge</h3>
-
-        <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <span class="five columns">Frage</span>
-            <span class="five columns">Letzter Beitrag</span>
-            <span class="one columns">Aktionen</span>
+        <h3 class="mt-5">Neueste Diskussionsbeiträge</h3>
+        <div class="row d-none d-md-flex" style="font-weight: bold" aria-hidden="true">
+            <span class="col-md-4 col-lg-5">Frage</span>
+            <span class="col-md-4 col-lg-4">Letzter Beitrag</span>
+            <span class="col-md-4 col-lg-3">Aktionen</span>
         </div>
-        <ul>
-            <li v-for="comment in latestComments" class="row">
-                <div class="five columns">
-                    <label for="question" class="show-mobile" aria-hidden="true">Frage: </label>
+        <ul class="entries p-0">
+            <li v-for="comment in latestComments" class="row py-3 py-md-0">
+                <div class="col-md-4 col-lg-5">
+                    <label for="question" class="d-md-none" aria-hidden="true">Frage: </label>
                     <label for="question" class="only-screenreader">Frage</label>
                     <div id="question">{{getQuestionText(comment)}}</div>
                 </div>
-                <div class="five columns">
-                    <label class="show-mobile" aria-hidden="true" for="lastcomment">Letzter Beitrag: </label>
+                <div class="col-md-4 col-lg-4">
+                    <label class="d-md-none" aria-hidden="true" for="lastcomment">Letzter Beitrag: </label>
                     <label for="lastcomment" class="only-screenreader">Letzter Beitrag</label>
-                    <div id="lastcomment" style="display: inline-block; text-align: left">{{comment.text}}</div>
+                    <div id="lastcomment">{{comment.text}}</div>
                 </div>
-                <div class="one columns">
-                    <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
+                <div class="col-md-4 col-lg-3">
+                    <label class="d-md-none mb-1" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
-                    <div id="btngroup" role="group" style="display: inline-block">
-                        <button title="Zur Diskussion" @click="$router.push('/discussion/' + comment.questionId)"><i aria-hidden="true" class="fas fa-comment"/></button>
+                    <div id="btngroup" role="group" class="mb-2 mb-md-0">
+                        <button class="btn form-control" title="Zur Diskussion" @click="$router.push('/discussion/' + comment.questionId)"><i aria-hidden="true" class="fas fa-comment"/> Zur Diskussion</button>
                     </div>
                 </div>
             </li>
@@ -142,46 +141,33 @@
 </script>
 
 <style scoped>
-    @media (min-width: 550px) {
-        .row {
-            display: flex;
-        }
-
-        .row > label {
-            display: flex;
-        }
-
-        .row > label.center {
-            align-items: center;
-        }
-
-        .question {
-            font-weight: normal;
-        }
-    }
-
-    @media (max-width: 550px) {
-        .question {
-            font-weight: bold;
-        }
-
-        ul li {
-            border: 1px solid gray;
-        }
-
-        ul li button {
-            padding: 0 1em;
-            margin: 5px;
-        }
-    }
-
-    .row {
-        margin-bottom: 1em;
-    }
-
     ul {
         list-style-type: none;
         margin-bottom: 0;
     }
 
+    @media (max-width: 767px) {
+        ul li {
+            outline: 1px solid lightgray;
+            outline-offset: -5px;
+        }
+    }
+
+    .btn {
+        border: 1px solid gray;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    @media (max-width: 767px) {
+        .btn {
+            padding-left: 1.5em;
+            padding-right: 1.5em;
+            margin-right: 0.5em;
+        }
+    }
+
+    .entries label {
+        margin: 0.5em 0 0 0;
+    }
 </style>

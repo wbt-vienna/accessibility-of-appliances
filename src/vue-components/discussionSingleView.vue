@@ -1,81 +1,83 @@
 <template>
-    <div class="wrapper" v-if="comments && question">
+    <div class="container" v-if="comments && question">
         <h2>Diskussion zu Frage {{util.getQuestionNumber(question)}}</h2>
-        <router-link to="/discussion">Zur Diskussions-Übersicht aller Fragen</router-link>
         <h3>Info zur Frage</h3>
-        <div class="row">
-            <label for="qText" class="three columns">Frage</label>
-            <span id="qText" class="eight columns">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
+        <div class="form-group">
+            <label for="qText">Frage</label>
+            <div id="qText">{{util.getQuestionNumber(question) + ' ' + question.question.de}}</div>
         </div>
-        <div class="row">
-            <label for="possibleAnswers" class="three columns">Mögliche Antworten</label>
-            <button class="one column" :title="showExamples ? 'zusätzliche Beispiele zu Antwortmöglichkeiten verbergen' : 'zusätzliche Beispiele zu Antwortmöglichkeiten einblenden'" @click="showExamples = !showExamples" style="order: 2; margin-bottom: 1em">
-                <i aria-hidden="true" :class="showExamples ? 'fas fa-eye-slash' : 'fas fa-eye'"/>
-                <span class="show-mobile">{{showExamples ? 'Beispiele verbergen' : 'Beispiele einblenden'}}</span>
-            </button>
-            <div class="seven columns" style="order: 1">
-                <ul id="possibleAnswers">
-                    <li>
-                        <div style="font-weight: bold">nicht zutreffend</div>
-                        <label for="exampleList1" v-if="question.examplesNotApplicable && showExamples" style="font-weight: normal; font-style: italic">Beispiele:</label>
-                        <ul id="exampleList1" v-if="question.examplesNotApplicable && showExamples" style="margin-bottom: 2em">
-                            <li v-for="example in question.examplesNotApplicable">{{example.text}}</li>
-                        </ul>
-                    </li>
-                    <li v-for="possibleAnswer in question.possibleAnswers" style="margin-bottom: 1em">
-                        <div style="font-weight: bold">{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</div>
-                        <label for="exampleList" v-if="possibleAnswer.examples && showExamples" style="font-weight: normal; font-style: italic">Beispiele:</label>
-                        <ul id="exampleList" v-if="possibleAnswer.examples && showExamples" style="margin-bottom: 2em">
-                            <li v-for="example in possibleAnswer.examples">{{example.text}}</li>
-                        </ul>
-                    </li>
-                </ul>
+        <div class="form-group">
+            <label for="possibleAnswers">Mögliche Antworten</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="form-control btn-primary" :title="showExamples ? 'zusätzliche Beispiele zu Antwortmöglichkeiten verbergen' : 'zusätzliche Beispiele zu Antwortmöglichkeiten einblenden'" @click="showExamples = !showExamples">
+                        <i aria-hidden="true" :class="showExamples ? 'fas fa-eye-slash' : 'fas fa-eye'"/>
+                        <span>{{showExamples ? 'Beispiele verbergen' : 'Beispiele einblenden'}}</span>
+                    </button>
+                </div>
+                <div class="col-md-8 order-first">
+                    <ul id="possibleAnswers" style="list-style-type: unset;">
+                        <li style="margin-bottom: 0.5em">
+                            <div>nicht zutreffend</div>
+                            <label for="exampleList1" v-if="question.examplesNotApplicable && showExamples" class="mb-0 mt-1" style="font-weight: normal; font-style: italic">Beispiele:</label>
+                            <ul id="exampleList1" v-if="question.examplesNotApplicable && showExamples" style="margin-bottom: 1.5em; padding: 0">
+                                <li v-for="example in question.examplesNotApplicable">{{example.text}}</li>
+                            </ul>
+                        </li>
+                        <li v-for="possibleAnswer in question.possibleAnswers" style="margin-bottom: 0.5em">
+                            <div>{{possibleAnswer.percentage}}% - {{possibleAnswer.text}}</div>
+                            <label for="exampleList" v-if="possibleAnswer.examples && showExamples" class="mb-0 mt-1" style="font-weight: normal; font-style: italic">Beispiele:</label>
+                            <ul id="exampleList" v-if="possibleAnswer.examples && showExamples" style="margin-bottom: 1.5em; padding: 0">
+                                <li v-for="example in possibleAnswer.examples">{{example.text}}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <label for="weights" class="three columns">Gewichtungen</label>
-            <span id="weights" class="eight columns">
-                <ul>
+        <div class="form-group">
+            <label for="weights">Gewichtungen</label>
+            <div id="weights">
+                <ul class="p-0">
                     <li><span>Gesamtgewichtung<span class="only-screenreader"> der Frage</span>: </span>{{question.weight}} von 3 Punkten</li>
                     <li v-for="(targetgroup, index) in constants.TARGETGROUPS">
                         <span><span class="only-screenreader">Gewichtung für Zielgruppe </span>{{targetgroup | translate}}:</span>&nbsp;{{question.weightPerGroup[targetgroup]}} von 3 Punkten
                     </li>
                 </ul>
-            </span>
+            </div>
         </div>
 
-        <h3>Diskussionsbeiträge</h3>
-        <div class="row" v-if="!addCommentMode">
-            <button class="nine columns" @click="addCommentMode = true"><i aria-hidden="true" class="fas fa-plus"/> Neuen Kommentar erstellen</button>
-        </div>
-        <div v-if="addCommentMode">
+        <h3 class="mt-4">Diskussionsbeiträge</h3>
+        <div>
             <h4>Neuen Kommentar eingeben</h4>
-            <div class="row">
-                <label for="inputName" class="three columns">Kommentieren als</label>
-                <input id="inputName" class="six columns" type="text" v-model="userName" placeholder="z.B. Namenskürzel, Vorname, etc."/>
+            <div class="form-group">
+                <label for="inputName">Kommentieren als</label>
+                <input id="inputName" class="form-control" type="text" v-model="userName" placeholder="z.B. Namenskürzel, Vorname, etc."/>
             </div>
-            <div class="row">
-                <textarea class="nine columns" placeholder="Neuen Kommentar hier eingeben" v-model="commentText"/>
-                <button class="two columns" :title="!userName || !commentText ? 'Senden nicht möglich, da kein Kommentar oder Name eingegeben wurde' : ''" @click="addComment()" :disabled="!userName || !commentText">Senden</button>
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Neuen Kommentar hier eingeben" v-model="commentText"/>
+                <button class="form-control btn-primary mt-2" :title="!userName || !commentText ? 'Senden nicht möglich, da kein Kommentar oder Name eingegeben wurde' : ''" @click="addComment()" :disabled="!userName || !commentText">Senden</button>
             </div>
         </div>
-        <h4>Vorhandene Kommentare (neueste zuerst)</h4>
-        <ul>
-            <li v-for="comment in comments">
+        <h4 class="mt-4">Vorhandene Kommentare (neueste zuerst)</h4>
+        <ul class="p-0">
+            <li v-for="comment in comments" class="container">
                 <div class="row" style="margin-bottom: 0">
-                    <div class="nine columns"><b>von {{comment.createdBy}}</b>, {{new Date(comment.created).toLocaleString('de')}} Uhr</div>
+                    <div><b>von {{comment.createdBy}}</b>, {{new Date(comment.created).toLocaleString('de')}} Uhr</div>
                 </div>
                 <div class="row">
-                    <div class="nine columns" style="white-space: pre-wrap; background-color: whitesmoke">{{comment.text}}</div>
-                    <button v-if="comment.createdBy === userName && comment.id === comments[0].id" class="two columns" title="Kommentar löschen" @click="deleteComment(comment.id)" style="margin-bottom: 1em">
+                    <div class="col-md-11 mb-1" style="white-space: pre-wrap; background-color: whitesmoke; display: flex; align-items: center;">{{comment.text}}</div>
+                    <button v-if="comment.createdBy === userName && comment.id === comments[0].id" title="Kommentar löschen" @click="deleteComment(comment.id)" class="btn form-control col-md-1" style="border: 1px solid gray">
                         <i aria-hidden="true" class="fas fa-trash-alt"/>
-                        <span class="show-mobile">Kommentar löschen</span>
+                        <span class="d-inline-block d-md-none">Kommentar löschen</span>
                     </button>
                 </div>
             </li>
         </ul>
-        <div class="row" v-if="comments.length === 0">(keine Kommentare)</div>
-        <router-link to="/discussion">Zur Diskussions-Übersicht aller Fragen</router-link>
+        <div v-if="comments.length === 0">(keine Kommentare)</div>
+        <div style="margin: 4em 0">
+            <router-link to="/discussion">Zur Diskussions-Übersicht aller Fragen</router-link>
+        </div>
     </div>
 </template>
 
@@ -97,7 +99,6 @@
                 allComments: null,
                 commentText: "",
                 showExamples: false,
-                addCommentMode: false,
                 userName: localStorageService.getUser(),
                 constants: constants,
                 entryUtil: entryUtil,
@@ -123,7 +124,6 @@
                     createdBy: this.userName
                 }));
                 dataService.saveComments(this.allComments);
-                this.addCommentMode = false;
                 this.commentText = '';
             },
             deleteComment(id) {
@@ -186,8 +186,8 @@
     }
 
     ul {
-        list-style-type: none;
         margin: 0;
+        list-style-type: none;
     }
 
     button {
