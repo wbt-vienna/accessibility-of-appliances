@@ -115,6 +115,9 @@
         },
         methods: {
             getTextAnswer(question) {
+                if (!thiz.entry.answers[question.id]) {
+                    return "(keine Antwort)"
+                }
                 let possibleAnswer = question.possibleAnswers.filter(a => a.id === thiz.entry.answers[question.id].answerId)[0];
                 if (possibleAnswer) {
                     return `${possibleAnswer.percentage} % - ${possibleAnswer.text}`;
