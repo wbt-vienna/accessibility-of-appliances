@@ -1,38 +1,33 @@
 <template>
-    <div class="wrapper" v-if="initialized">
+    <div class="container" v-if="initialized">
         <h2>Bewertungseinsicht</h2>
         <div >
-            <div class="row">
-                <h3 class="eleven colums">Zusammenfassung</h3>
-            </div>
-            <div class="row">
-                <label for="product" class="three columns center">Bezeichnung</label>
-                <span id="product" aria-label="externer Link des gewählten Produkts auf geizhals.at" class="seven columns" v-if="entry.product">
+            <h3>Zusammenfassung</h3>
+            <div class="form-group">
+                <label for="product">Bezeichnung</label>
+                <div id="product" aria-label="externer Link des gewählten Produkts auf geizhals.at" v-if="entry.product">
                     <a target="_blank" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
-                </span>
+                </div>
             </div>
-
-            <div class="row">
-                <label for="category" class="three columns center">Kategorie</label>
-                <span id="category" class="eight columns" v-if="entry.category">{{entry.category.label}}</span>
+            <div class="form-group">
+                <label for="category">Kategorie</label>
+                <div id="category" v-if="entry.category">{{entry.category.label}}</div>
             </div>
-            <div class="row">
-                <label for="scoreTotal" class="three columns">Aufgrund von Angaben berechnete Gesamtbewertung</label>
-                <span id="scoreTotal" class="eight columns">{{Math.round(entry.score)}} %</span>
+            <div class="form-group">
+                <label for="scoreTotal">Aufgrund von Angaben berechnete Gesamtbewertung</label>
+                <div id="scoreTotal">{{Math.round(entry.score)}} %</div>
             </div>
-            <div class="row">
-                <label for="scoreTargetgroup" class="three columns">Bewertung je Zielgruppe</label>
-                <div class="eight columns" id="scoreTargetgroup">
+            <div class="form-group">
+                <label for="scoreTargetgroup">Bewertung je Zielgruppe</label>
+                <div id="scoreTargetgroup">
                     <div v-for="groupId in Object.keys(entry.scoresByGroup)">{{groupId | translate}}: {{Math.round(entry.scoresByGroup[groupId])}} %</div>
                 </div>
             </div>
-            <div class="row">
-                <h3  class="eleven colums">Allgemeine Informationen</h3>
-            </div>
-            <div >
-                <div class="row">
-                    <label for="displayTypes" class="three columns">Die Darbietung wesentlicher Informationen für den Gebrauch erfolgt:</label>
-                    <ul id="displayTypes" class="eight columns">
+            <h3  class="eleven colums mt-4">Allgemeine Informationen</h3>
+            <div>
+                <div class="form-group">
+                    <label for="displayTypes">Die Darbietung wesentlicher Informationen für den Gebrauch erfolgt:</label>
+                    <ul id="displayTypes">
                         <li v-for="displayType in constants.DISPLAY_TYPES">
                             <div v-if="entry.questionCategories[displayType]">
                                 <span style="display: inline-block">{{displayType + '_CHK' | translate}}</span>
@@ -40,9 +35,9 @@
                         </li>
                     </ul>
                 </div>
-                <div class="row">
-                    <label for="usageTypes" class="three columns">Die Nutzungsmöglichkeiten des Geräts sind:</label>
-                    <ul id="usageTypes" class="eight columns">
+                <div class="form-group">
+                    <label for="usageTypes">Die Nutzungsmöglichkeiten des Geräts sind:</label>
+                    <ul id="usageTypes">
                         <li v-for="usageType in constants.USAGE_TYPES">
                             <div v-if="entry.questionCategories[usageType]">
                                 <span style="display: inline-block">{{usageType + '_CHK' | translate}}</span>
@@ -50,32 +45,32 @@
                         </li>
                     </ul>
                 </div>
-                <div class="row">
-                    <label for="updatedBy" class="three columns center">Eintrag erstellt von</label>
-                    <span id="updatedBy" class="eight columns">{{entry.updatedBy}}</span>
+                <div class="form-group">
+                    <label for="updatedBy">Eintrag erstellt von</label>
+                    <div id="updatedBy">{{entry.updatedBy}}</div>
                 </div>
-                <div v-for="(categoryQuestions, type) in categorizedQuestions" style="margin-top: 3em;">
+                <div class="mt-4" v-for="(categoryQuestions, type) in categorizedQuestions">
                     <div v-if="categoryQuestions.length > 0 && entry.questionCategories[type]">
                         <h3>Fragen zu "{{type | translate}}"</h3>
-                        <div class="row" v-for="question in categoryQuestions">
-                            <label :for="'question' + question.id.split(' ').join('')" class="five columns question">
+                        <div class="form-group mb-4" v-for="question in categoryQuestions">
+                            <label :for="'question' + question.id.split(' ').join('')">
                                 <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
                             </label>
-                            <span class="six columns" :id="'question' + question.id.split(' ').join('')">
+                            <div :id="'question' + question.id.split(' ').join('')">
                                 {{getTextAnswer(question)}}
-                            </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="mt-4">
                     <h3>Fragen zu "{{constants.USAGE_GENERAL | translate}}"</h3>
-                    <div class="row" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
-                        <label :for="'questiongeneral' + question.id.split(' ').join('')" class="five columns question">
+                    <div class="form-group mb-4" v-for="question in categorizedQuestions[constants.USAGE_GENERAL]">
+                        <label :for="'questiongeneral' + question.id.split(' ').join('')">
                             <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
                         </label>
-                        <span class="six columns" :id="'questiongeneral' + question.id.split(' ').join('')">
+                        <div :id="'questiongeneral' + question.id.split(' ').join('')">
                             {{getTextAnswer(question)}}
-                        </span>
+                        </div>
                     </div>
                 </div>
                 <div v-if="entry.comment">
@@ -148,36 +143,9 @@
 </script>
 
 <style scoped>
-    @media (min-width: 550px) {
-        .row {
-            display: flex;
-        }
-
-        .row > label {
-            display: flex;
-        }
-
-        .row > label.center {
-            align-items: center;
-        }
-
-        .question {
-            font-weight: normal;
-        }
-    }
-
-    @media (max-width: 550px) {
-        .question {
-            font-weight: bold;
-        }
-    }
-
-    .row {
-        margin-bottom: 1em;
-    }
-
     ul {
         list-style-type: none;
         margin-bottom: 0;
+        padding: 0;
     }
 </style>
