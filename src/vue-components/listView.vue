@@ -1,67 +1,71 @@
 <template>
-    <div class="wrapper">
+    <div class="container">
         <h2>Erfasste Geräte</h2>
         <h3>Filter</h3>
         <div>
             <p>Info: Filterkriterien (Freitextsuche oder Kategorie) werden bei Änderung sofort übernommen und die Liste der Geräte an die Filterkriterien angepasst.</p>
         </div>
-        <div class="row">
-            <label for="inText" class="col-sm-3">Freitextsuche</label>
-            <input id="inText" type="search" class="col-sm-7" style="height: 1.5em;" v-model="filterOptions.text" @input="filterChanged()"/>
+        <div class="form-group">
+            <label for="inText">Freitextsuche</label>
+            <input id="inText" type="search" class="form-control" v-model="filterOptions.text" @input="filterChanged()"/>
         </div>
         <div class="row">
-            <label for="category" class="col-sm-3">Kategorie</label>
-            <select id="category" class="col-sm-7" @change="filterChanged()" v-model="filterOptions.category">
-                <option selected value="">alle Kategorien</option>
-                <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
-                <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
-            </select>
+            <div class="form-group col-md-6">
+                <label for="category">Kategorie</label>
+                <select id="category" class="form-control" @change="filterChanged()" v-model="filterOptions.category">
+                    <option selected value="">alle Kategorien</option>
+                    <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
+                    <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="scoreType">Anzuzeigende Bewertung für Zielgruppe</label>
+                <select id="scoreType" class="form-control" @change="filterChanged()" v-model="filterOptions.scoreType">
+                    <option selected value="">Gesamtbewertung</option>
+                    <option v-for="targetGroupId in constants.TARGETGROUPS" :value="targetGroupId">{{targetGroupId | translate}}</option>
+                </select>
+            </div>
         </div>
-        <div class="row">
-            <label for="scoreType" class="col-sm-3">Anzuzeigende Bewertung für Zielgruppe</label>
-            <select id="scoreType" class="col-sm-7" @change="filterChanged()" v-model="filterOptions.scoreType">
-                <option selected value="">Gesamtbewertung</option>
-                <option v-for="targetGroupId in constants.TARGETGROUPS" :value="targetGroupId">{{targetGroupId | translate}}</option>
-            </select>
-        </div>
-
-        <h3 style="margin-top: 2em">Liste der Einträge</h3>
-        <div class="row hide-mobile" style="font-weight: bold" aria-hidden="true">
-            <span class="col-sm-6">Titel</span>
-            <span class="col-sm-3">Bewertung</span>
-            <span class="col-sm-3">Aktionen</span>
+        <h3>Liste der Einträge</h3>
+        <div class="row d-none d-md-flex" style="font-weight: bold" aria-hidden="true">
+            <span class="col-md-6">Titel</span>
+            <span class="col-md-2">Bewertung</span>
+            <span class="col-md-4">Aktionen</span>
         </div>
         <span class="only-screenreader">Die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet.</span>
         <span class="only-screenreader">Die Liste ist absteigend nach Bewertung sortiert, beste Bewertung zuerst.</span>
         <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
-        <ul>
-            <li v-for="entry in filteredEntries" class="row">
-                <div class="col-sm-6">
-                    <i v-if="entry.pendingConfirmation" class="fas fa-question-circle" title="nicht verifizierter Eintrag eines anonymen Users"></i>
-                    <label for="link" class="show-mobile" aria-hidden="true">Bezeichnung: </label>
+        <ul class="entries">
+            <li v-for="entry in filteredEntries" class="row py-3 py-md-0">
+                <div class="col-md-6">
+                    <div class="d-md-none" v-if="entry.pendingConfirmation"><i>nicht verifizierter Eintrag</i></div>
+                    <label for="link" class="d-md-none" aria-hidden="true">Bezeichnung: </label>
                     <label for="link" class="only-screenreader">Bezeichnung</label>
-                    <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                    <div class="d-md-inline-block">
+                        <i v-if="entry.pendingConfirmation" class="fas fa-question-circle d-none d-md-inline-block" title="nicht verifizierter Eintrag eines anonymen Users"></i>
+                        <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                    </div>
                 </div>
-                <div class="col-sm-3">
-                    <label class="show-mobile" aria-hidden="true" for="score">Bewertung: </label>
+                <div class="col-md-2">
+                    <label class="d-md-none" aria-hidden="true" for="score">Bewertung: </label>
                     <label for="score" class="only-screenreader">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</label>
-                    <div id="score" class="bewertung" style="display: inline-block; text-align: left">{{filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)}} %</div>
+                    <div id="score" class="bewertung" style="text-align: left">{{filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)}} %</div>
                 </div>
-                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-sm-3">
-                    <label class="show-mobile" aria-hidden="true" for="btngroup">Aktionen: </label>
+                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-md-4">
+                    <label class="d-md-none mb-1" aria-hidden="true" for="btngroup">Aktionen: </label>
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
-                    <div id="btngroup" role="group" style="display: inline-block">
-                        <button title="Eintrag ansehen" @click="route(entry)"><i aria-hidden="true" class="fas fa-eye"/></button>
-                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Bearbeiten" @click="edit(entry)"><i aria-hidden="true" class="fas fa-edit"></i></button>
-                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Löschen" @click="remove(entry)"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
-                        <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)"><i aria-hidden="true" class="fas fa-check"></i></button>
+                    <div id="btngroup" role="group" class="mb-2 mb-md-0">
+                        <button title="Eintrag ansehen" @click="route(entry)" class="btn"><i aria-hidden="true" class="fas fa-eye"/></button>
+                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Bearbeiten" @click="edit(entry)" class="btn"><i aria-hidden="true" class="fas fa-edit"></i></button>
+                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Löschen" @click="remove(entry)" class="btn"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
+                        <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)" class="btn"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
                 </div>
             </li>
         </ul>
         <span v-if="entries && filteredEntries && filteredEntries.length === 0">(keine Geräte gefunden)</span>
-        <div class="row" v-if="isLoggedIn">
-            <button @click="recalculateAll()">Alle Einträge neu berechnen</button>
+        <div class="form-group" v-if="isLoggedIn" style="margin: 5em 0">
+            <button class="form-control btn-primary mb-1" @click="recalculateAll()">Alle Einträge neu berechnen</button>
             <span v-if="recalculateDone === false" aria-live="assertive">Einträge werden neu berechnet...</span>
             <span v-if="recalculateDone === true" aria-live="assertive">Einträge sind neu berechnet und gespeichert!</span>
         </div>
@@ -183,27 +187,39 @@
 <style scoped>
     ul {
         list-style-type: none;
+        padding: 0;
     }
 
-    button {
-        padding: 0 0.5em;
-        margin: 5px;
-    }
-
-    .row {
-        margin-bottom: 1em;
-    }
-
-    @media (max-width: 550px) {
+    @media (max-width: 767px) {
         ul li {
-            border: 1px solid gray;
+            outline: 1px solid lightgray;
+            outline-offset: -5px;
         }
     }
 
-    @media (min-width: 550px) {
-        ul li .bewertung {
-            text-align: center;
-            width: 100%;
+    .btn {
+        border: 1px solid gray;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    @media (min-width: 993px) {
+        .btn {
+            padding-left: 1.25em;
+            padding-right: 1.25em;
+            margin: 0.25em;
         }
+    }
+
+    @media (max-width: 767px) {
+        .btn {
+            padding-left: 1.5em;
+            padding-right: 1.5em;
+            margin-right: 0.5em;
+        }
+    }
+
+    .entries label {
+        margin: 0.5em 0 0 0;
     }
 </style>
