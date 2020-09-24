@@ -77,6 +77,9 @@
                     <h3>Kommentar zum Eintrag</h3>
                     <div id="comment">{{entry.comment}}</div>
                 </div>
+                <div class="mt-5">
+                    <router-link to="/list">Zurück zur Liste der Einträge</router-link>
+                </div>
             </div>
         </div>
     </div>
