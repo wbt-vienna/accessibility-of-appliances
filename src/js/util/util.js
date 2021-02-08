@@ -67,4 +67,9 @@ util.getQuestionNumber = function (question) {
     return question.label;
 };
 
+util.getAvg = function (array) {
+    let sum = array.reduce((a, b) => a + b, 0);
+    return (sum / array.length) || 0;
+};
+
 export {util};
