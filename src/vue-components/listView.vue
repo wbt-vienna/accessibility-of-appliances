@@ -26,6 +26,12 @@
                 </select>
             </div>
         </div>
+        <div class="row">
+            <div class="form-group col-12">
+                <input id="groupIdentical" type="checkbox" v-model="filterOptions.groupIdentical" @change="filterChanged(0)"/>
+                <label for="groupIdentical">Bewertungen des gleichen Gerätes gemeinsam anzeigen</label>
+            </div>
+        </div>
         <h3>Liste der Einträge</h3>
         <div class="row d-none d-md-flex" style="font-weight: bold" aria-hidden="true">
             <span class="col-md-6">Titel</span>
@@ -56,8 +62,9 @@
                     <label for="btngroup" class="only-screenreader">Aktionen</label>
                     <div id="btngroup" role="group" class="mb-2 mb-md-0">
                         <button title="Eintrag ansehen" @click="route(entry)" class="btn"><i aria-hidden="true" class="fas fa-eye"/></button>
-                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Bearbeiten" @click="edit(entry)" class="btn"><i aria-hidden="true" class="fas fa-edit"></i></button>
-                        <button v-if="isLoggedIn || entry.pendingConfirmation" title="Löschen" @click="remove(entry)" class="btn"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
+                        <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Bearbeiten" @click="edit(entry)" class="btn"><i aria-hidden="true" class="fas fa-edit"></i></button>
+                        <button v-if="entry.isCumulative" title="Einzelbewertungen anzeigen" @click="showSingleEntries(entry)" class="btn"><i aria-hidden="true" class="fas fa-list"></i></button>
+                        <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Löschen" @click="remove(entry)" class="btn"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
                         <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)" class="btn"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
                 </div>
@@ -87,11 +94,7 @@
             return {
                 entries: null,
                 filteredEntries: null,
-                filterOptions: {
-                    category: "",
-                    text: "",
-                    scoreType: ""
-                },
+                filterOptions: {},
                 recalculateDone: undefined,
                 categories: {},
                 isLoggedIn: databaseService.isLoggedInReadWrite(),
@@ -125,7 +128,22 @@
             },
             verify(entry) {
                 entry.pendingConfirmation = false;
+                this.filterChanged(0);
                 dataService.saveEntry(entry);
+            },
+            showSingleEntries(cumulativeEntry) {
+                this.resetFilter();
+                this.filterOptions.text = cumulativeEntry.product.label;
+                this.filterOptions.groupIdentical = false;
+                this.filterChanged(0);
+            },
+            resetFilter() {
+                this.filterOptions = {
+                    category: "",
+                    text: "",
+                    scoreType: "",
+                    groupIdentical: true
+                };
             },
             recalculateAll() {
                 if (!confirm('Hiermit werden alle Einträge neu berechnet. Dieser Schritt ist nur notwendig, wenn die Bewertungskriterien verändert wurden. Möchen Sie fortfahen?')) {
@@ -158,6 +176,36 @@
                             thiz.filteredEntries = thiz.filteredEntries.filter(e => e.category.id === thiz.filterOptions.category);
                         }
                     }
+
+                    if (thiz.filterOptions.groupIdentical) {
+                        let unconfirmedEntries = thiz.filteredEntries.filter(e => !!e.pendingConfirmation);
+                        let confirmedEntries = thiz.filteredEntries.filter(e => !e.pendingConfirmation);
+                        let idMap = confirmedEntries.reduce((total, current) => {
+                            total[current.product.id] = total[current.product.id] || [];
+                            total[current.product.id].push(current);
+                            return total;
+                        }, {});
+                        thiz.filteredEntries = unconfirmedEntries;
+                        Object.keys(idMap).forEach(id => {
+                            let entries = idMap[id];
+                            if (entries.length === 1) {
+                                thiz.filteredEntries.push(entries[0]);
+                            } else {
+                                let newEntry = {
+                                    isCumulative: true,
+                                    product: JSON.parse(JSON.stringify(entries[0].product)),
+                                    score: util.getAvg(entries.map(e => e.score)),
+                                    scoresByGroup: {},
+                                    singleEntries: entries
+                                }
+                                constants.TARGETGROUPS.forEach(targetGroup => {
+                                    newEntry.scoresByGroup[targetGroup] = util.getAvg(entries.map(e => e.scoresByGroup[targetGroup]));
+                                });
+                                thiz.filteredEntries.push(newEntry);
+                            }
+                        });
+                    }
+
                     thiz.filteredEntries.sort((a, b) => {
                         let score1 = thiz.filterOptions.scoreType ? b.scoresByGroup[thiz.filterOptions.scoreType] : b.score;
                         let score2 = thiz.filterOptions.scoreType ? a.scoresByGroup[thiz.filterOptions.scoreType] : a.score;
@@ -175,6 +223,7 @@
         },
         mounted() {
             thiz = this;
+            thiz.resetFilter();
             thiz.init();
             $(document).on(constants.EVENT_DB_PULL_UPDATED, thiz.init);
         },
