@@ -7,7 +7,7 @@
         </div>
         <div class="form-group">
             <label for="inText">Freitextsuche</label>
-            <input id="inText" type="search" class="form-control" v-model="filterOptions.text" @input="filterChanged()"/>
+            <input id="inText" type="search" class="form-control" v-model="filterOptions.text" @input="filterChanged(300)"/>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
@@ -28,7 +28,7 @@
         </div>
         <div class="row">
             <div class="form-group col-12">
-                <input id="groupIdentical" type="checkbox" v-model="filterOptions.groupIdentical" @change="filterChanged(0)"/>
+                <input id="groupIdentical" type="checkbox" v-model="filterOptions.groupIdentical" @change="filterChanged()"/>
                 <label for="groupIdentical">Bewertungen des gleichen Gerätes gemeinsam anzeigen</label>
             </div>
         </div>
@@ -40,30 +40,35 @@
         </div>
         <span class="only-screenreader">Die Links in der Liste führen zum Produkt auf geizhals.at und werden in einem neuen Tab geöffnet.</span>
         <span class="only-screenreader">Die Liste ist absteigend nach Bewertung sortiert, beste Bewertung zuerst.</span>
-        <span class="only-screenreader" aria-live="assertive" v-if="filteredEntries">{{filteredEntries.length}} angezeigte Einträge</span>
         <ul class="entries">
             <li v-for="entry in filteredEntries" class="row py-3 py-md-0">
-                <div class="col-md-6">
+                <div class="col-md-6 mt-md-2">
                     <div class="d-md-none" v-if="entry.pendingConfirmation"><i>nicht verifizierter Eintrag</i></div>
-                    <label for="link" class="d-md-none" aria-hidden="true">Bezeichnung: </label>
-                    <label for="link" class="only-screenreader">Bezeichnung</label>
+                    <span class="d-md-none table-label" aria-hidden="true">Bezeichnung: </span>
+                    <span class="only-screenreader">Bezeichnung</span>
                     <div class="d-md-inline-block">
                         <i v-if="entry.pendingConfirmation" class="fas fa-question-circle d-none d-md-inline-block" title="nicht verifizierter Eintrag eines anonymen Users"></i>
-                        <a id="link" target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
+                        <a target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <label class="d-md-none" aria-hidden="true" for="score">Bewertung: </label>
-                    <label for="score" class="only-screenreader">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</label>
-                    <div id="score" class="bewertung" style="text-align: left">{{filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)}} %</div>
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <span class="d-md-none table-label" aria-hidden="true">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType) + ':') : 'Gesamtbewertung:'}}</span>
+                    <span class="sr-only">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</span>
+                    <div>
+                        <div class="rating-box" aria-hidden="true" :title="(filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)) + '%'">
+                            <div class="rating" :style="'width:' + (filterOptions.scoreType ? entry.scoresByGroup[filterOptions.scoreType] : entry.score) + '%;'"></div>
+                        </div>
+                        <span class="sr-only">{{(filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)) + '%'}}</span>
+                        <span><span class="sr-only">Anzahl der Bewertungen:</span>{{entry.singleEntries ? entry.singleEntries.length : 1}}</span>
+                    </div>
                 </div>
-                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-md-4">
-                    <label class="d-md-none mb-1" aria-hidden="true" for="btngroup">Aktionen: </label>
-                    <label for="btngroup" class="only-screenreader">Aktionen</label>
-                    <div id="btngroup" role="group" class="mb-2 mb-md-0">
+                <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-md-4 mt-2 mt-md-0">
+                    <span class="d-md-none mb-1 table-label" aria-hidden="true" for="btngroup">Aktionen: </span>
+                    <span class="only-screenreader">Aktionen</span>
+                    <div role="group" class="mb-2 mb-md-0">
                         <button title="Eintrag ansehen" @click="route(entry)" class="btn"><i aria-hidden="true" class="fas fa-eye"/></button>
                         <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Bearbeiten" @click="edit(entry)" class="btn"><i aria-hidden="true" class="fas fa-edit"></i></button>
-                        <button v-if="entry.isCumulative" title="Einzelbewertungen anzeigen" @click="showSingleEntries(entry)" class="btn"><i aria-hidden="true" class="fas fa-list"></i></button>
+                        <button v-if="entry.isCumulative" :title="entry.singleEntries.length +  ' einzelne Einträge einblenden'" @click="showSingleEntries(entry)" class="btn"><i aria-hidden="true" class="fas fa-list"></i></button>
                         <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Löschen" @click="remove(entry)" class="btn"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
                         <button v-if="isLoggedIn && entry.pendingConfirmation" title="Eintrag verifizieren" @click="verify(entry)" class="btn"><i aria-hidden="true" class="fas fa-check"></i></button>
                     </div>
@@ -108,7 +113,7 @@
                     thiz.entries.forEach(e => {
                         thiz.categories[e.category.id] = e.category.label;
                     });
-                    thiz.filterChanged(0);
+                    thiz.filterChanged();
                 })
             },
             edit(entry) {
@@ -128,14 +133,14 @@
             },
             verify(entry) {
                 entry.pendingConfirmation = false;
-                this.filterChanged(0);
+                this.filterChanged();
                 dataService.saveEntry(entry);
             },
             showSingleEntries(cumulativeEntry) {
                 this.resetFilter();
                 this.filterOptions.text = cumulativeEntry.product.label;
                 this.filterOptions.groupIdentical = false;
-                this.filterChanged(0);
+                this.filterChanged();
             },
             resetFilter() {
                 this.filterOptions = {
@@ -163,7 +168,7 @@
                 });
             },
             filterChanged(timeout) {
-                timeout = timeout === undefined ? 500 : timeout;
+                timeout = timeout === undefined ? 0 : timeout;
                 util.debounce(() => {
                     thiz.filteredEntries = thiz.entries;
                     if (thiz.filterOptions.text) {
@@ -207,13 +212,10 @@
                     }
 
                     thiz.filteredEntries.sort((a, b) => {
-                        let score1 = thiz.filterOptions.scoreType ? b.scoresByGroup[thiz.filterOptions.scoreType] : b.score;
-                        let score2 = thiz.filterOptions.scoreType ? a.scoresByGroup[thiz.filterOptions.scoreType] : a.score;
-                        let diff = score1 - score2;
-                        if (!a.pendingConfirmation && !b.pendingConfirmation) {
-                            return diff;
-                        } else if (a.pendingConfirmation && b.pendingConfirmation) {
-                            return diff;
+                        if (!a.pendingConfirmation === !b.pendingConfirmation) { // same confirmation state -> use score or label
+                            let score1 = thiz.filterOptions.scoreType ? b.scoresByGroup[thiz.filterOptions.scoreType] : b.score;
+                            let score2 = thiz.filterOptions.scoreType ? a.scoresByGroup[thiz.filterOptions.scoreType] : a.score;
+                            return (score1 - score2) || a.product.label.localeCompare(b.product.label);
                         } else {
                             return a.pendingConfirmation ? 1 : -1;
                         }
@@ -268,7 +270,39 @@
         }
     }
 
-    .entries label {
-        margin: 0.5em 0 0 0;
+    .entries .table-label {
+        font-weight: bold;
+    }
+
+    /* rating box with fontawesome 5 inspired from - https://stackoverflow.com/a/49343426/6908282
+Whitspace in pseudo elements: https://stackoverflow.com/a/5467676/6908282
+replace "\f111" with \f005 to make it a star */
+
+    .rating-box {
+        position:relative;
+        vertical-align: middle;
+        font-family: FontAwesome;
+        display:inline-block;
+        color: orange;
+    }
+    .rating-box:before{
+        font-family: "Font Awesome 5 Free";
+        /* white-space: pre; */
+        font-weight: 400;
+        content: "\f005 \f005 \f005 \f005 \f005"; /* You can add gap by simply adding more spaces in between or you can use \00a0*/
+    }
+    .rating-box .rating {
+        position: absolute;
+        left:0;
+        top:0;
+        white-space:nowrap;
+        overflow:hidden;
+        color: orange;
+    }
+    .rating-box .rating:before {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        /* white-space: pre; */
+        content: "\f005 \f005 \f005 \f005 \f005";
     }
 </style>
