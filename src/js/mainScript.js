@@ -24,6 +24,7 @@ function init() {
         {path: '/login', component: LoginView},
         {path: '/edit/:id', component: NewView},
         {path: '/view/:id', component: ShowView},
+        {path: '/view/product/:productid', component: ShowView},
         {path: '/info', component: InfoView},
         {path: '/discussion', component: DiscussionView},
         {path: '/discussion/:questionid', component: DiscussionSingleView},
