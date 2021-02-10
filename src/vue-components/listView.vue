@@ -66,7 +66,7 @@
                     <span class="d-md-none mb-1 table-label" aria-hidden="true" for="btngroup">Aktionen: </span>
                     <span class="only-screenreader">Aktionen</span>
                     <div role="group" class="mb-2 mb-md-0">
-                        <button title="Eintrag ansehen" @click="route(entry)" class="btn"><i aria-hidden="true" class="fas fa-eye"/></button>
+                        <button title="Eintrag ansehen" @click="show(entry)" class="btn"><i aria-hidden="true" class="fas fa-eye"/></button>
                         <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Bearbeiten" @click="edit(entry)" class="btn"><i aria-hidden="true" class="fas fa-edit"></i></button>
                         <button v-if="entry.isCumulative" :title="entry.singleEntries.length +  ' einzelne Einträge einblenden'" @click="showSingleEntries(entry)" class="btn"><i aria-hidden="true" class="fas fa-list"></i></button>
                         <button v-if="!entry.isCumulative && (isLoggedIn || entry.pendingConfirmation)" title="Löschen" @click="remove(entry)" class="btn"><i aria-hidden="true" class="fas fa-trash-alt"/></button>
@@ -119,8 +119,12 @@
             edit(entry) {
                 thiz.$router.push('/edit/' + entry.id);
             },
-            route(entry){
-               thiz.$router.push('/view/' + entry.id)
+            show(entry){
+                if (entry.isCumulative) {
+                    thiz.$router.push('/view/product/' + entry.product.id)
+                } else {
+                    thiz.$router.push('/view/' + entry.id)
+                }
             },
 
             remove(entry) {
@@ -196,17 +200,7 @@
                             if (entries.length === 1) {
                                 thiz.filteredEntries.push(entries[0]);
                             } else {
-                                let newEntry = {
-                                    isCumulative: true,
-                                    product: JSON.parse(JSON.stringify(entries[0].product)),
-                                    score: util.getAvg(entries.map(e => e.score)),
-                                    scoresByGroup: {},
-                                    singleEntries: entries
-                                }
-                                constants.TARGETGROUPS.forEach(targetGroup => {
-                                    newEntry.scoresByGroup[targetGroup] = util.getAvg(entries.map(e => e.scoresByGroup[targetGroup]));
-                                });
-                                thiz.filteredEntries.push(newEntry);
+                                thiz.filteredEntries.push(entryUtil.getCumulativeEntry(entries));
                             }
                         });
                     }
