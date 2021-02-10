@@ -45,8 +45,13 @@
                         </li>
                     </ul>
                 </div>
-                <div class="form-group">
-                    <label for="updatedBy">Eintrag erstellt von</label>
+                <div class="form-group" v-if="entry.isCumulative">
+                    <label for="countEntries">Anzahl der Einträge für dieses Gerät:</label>
+                    <div id="countEntries">{{entry.singleEntries.length}}</div>
+                </div>
+                <div class="form-group" v-if="entry.updatedBy">
+                    <label v-if="!entry.isCumulative" for="updatedBy">Eintrag erstellt von:</label>
+                    <label v-if="entry.isCumulative" for="updatedBy">Einträge erstellt von:</label>
                     <div id="updatedBy">{{entry.updatedBy}}</div>
                 </div>
                 <div class="mt-4" v-for="(categoryQuestions, type) in categorizedQuestions">
@@ -56,9 +61,7 @@
                             <label :for="'question' + question.id.split(' ').join('')">
                                 <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
                             </label>
-                            <div :id="'question' + question.id.split(' ').join('')">
-                                {{getTextAnswer(question)}}
-                            </div>
+                            <div :id="'question' + question.id.split(' ').join('')" v-html="getTextAnswer(question)"></div>
                         </div>
                     </div>
                 </div>
@@ -68,9 +71,7 @@
                         <label :for="'questiongeneral' + question.id.split(' ').join('')">
                             <span>{{util.getQuestionNumber(question) + ' ' + question.question.de}}</span>
                         </label>
-                        <div :id="'questiongeneral' + question.id.split(' ').join('')">
-                            {{getTextAnswer(question)}}
-                        </div>
+                        <div :id="'questiongeneral' + question.id.split(' ').join('')" v-html="getTextAnswer(question)"></div>
                     </div>
                 </div>
                 <div v-if="entry.comment">
@@ -118,31 +119,59 @@
         },
         methods: {
             getTextAnswer(question) {
-                if (!thiz.entry.answers[question.id]) {
+                let text = this.entry.isCumulative ? '<ul>' : '';
+                let answerIds = thiz.entry.isCumulative ? thiz.entry.singleEntries.map(e => e.answers[question.id].answerId) : [thiz.entry.answers[question.id].answerId]
+                answerIds = answerIds.filter(a => !!a);
+                if (!answerIds[0]) {
                     return "(keine Antwort)"
                 }
-                let possibleAnswer = question.possibleAnswers.filter(a => a.id === thiz.entry.answers[question.id].answerId)[0];
-                if (possibleAnswer) {
-                    return `${possibleAnswer.percentage} % - ${possibleAnswer.text}`;
-                } else {
-                    return 'nicht zutreffend';
-                }
+                let answers = answerIds.map(id => question.possibleAnswers.filter(a => a.id === id)[0]);
+                let countMap = answers.reduce((acc, val) => acc.set(val, 1 + (acc.get(val) || 0)), new Map()); // map {Answer -> Count}
+                answers = Array.from(countMap.keys()); // no duplicated answers
+                answers.forEach(answer => {
+                    let count = countMap.get(answer);
+                    let prefix = this.entry.isCumulative ? `<li><span aria-hidden="true">(${count}x)</span><span class="sr-only">${count} mal beantwortet:</span> ` : '';
+                    let postfix = this.entry.isCumulative ? '</li>' : '';
+                    if (answer) {
+                        text += `${prefix}${answer.percentage} % - ${answer.text}${postfix}`;
+                    } else {
+                        text += `${prefix}nicht zutreffend${postfix}`;
+                    }
+                });
+                text = this.entry.isCumulative ? text + '</ul>' : text;
+                return text;
             }
         },
         mounted() {
             thiz = this;
             dataService.getQuestions().then(questions => {
                 thiz.questions = JSON.parse(JSON.stringify(questions));
-                dataService.getEntry(thiz.$route.params.id).then(entry => {
-                    if (!entry) {
-                        log.warn('entry not found!');
-                        thiz.$router.push('/list');
-                        return;
-                    }
-                    thiz.entry = JSON.parse(JSON.stringify(entry));
-                    entryUtil.calculateScores(thiz.entry, thiz.questions);
-                    thiz.initialized = true;
-                });
+                if (thiz.$route.params.id) {
+                    dataService.getEntry(thiz.$route.params.id).then(entry => {
+                        if (!entry) {
+                            return notFoundToList();
+                        }
+                        thiz.entry = JSON.parse(JSON.stringify(entry));
+                        entryUtil.calculateScores(thiz.entry, thiz.questions);
+                        thiz.initialized = true;
+                    });
+                } else if(thiz.$route.params.productid) {
+                    dataService.getEntries().then(entries => {
+                        entries = entries.filter(e => e.product.id === thiz.$route.params.productid);
+                        if (entries.length === 0) {
+                            return notFoundToList();
+                        }
+                        entries.forEach(entry => entryUtil.calculateScores(entry, thiz.questions));
+                        thiz.entry = entryUtil.getCumulativeEntry(entries);
+                        thiz.initialized = true;
+                    });
+                } else {
+                    notFoundToList();
+                }
+                function notFoundToList() {
+                    log.warn('entry not found!');
+                    thiz.$router.push('/list');
+                }
             });
         },
     }
