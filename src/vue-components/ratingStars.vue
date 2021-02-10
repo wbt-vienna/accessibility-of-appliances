@@ -4,7 +4,7 @@
             <div class="rating" :style="'width:' + percentage + '%;'"></div>
         </div>
         <span class="sr-only">{{Math.round(percentage) + '%'}}</span>
-        <span v-if="count"><span class="sr-only">Anzahl der Bewertungen:</span>{{count}}</span>
+        <span v-if="count > 1" :title="count + ' Bewertungen für dieses Gerät'"><span class="sr-only">Anzahl der Bewertungen:</span>{{count}} <span class="far fa-file-alt" aria-hidden="true"></span></span>
     </div>
 </template>
 
