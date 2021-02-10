@@ -128,6 +128,14 @@
                 let answers = answerIds.map(id => question.possibleAnswers.filter(a => a.id === id)[0]);
                 let countMap = answers.reduce((acc, val) => acc.set(val, 1 + (acc.get(val) || 0)), new Map()); // map {Answer -> Count}
                 answers = Array.from(countMap.keys()); // no duplicated answers
+                answers.sort((a, b) => {
+                    let diff = countMap.get(b) - countMap.get(a);
+                    if (diff !== 0) {
+                        return diff < 0 ? -1 : 1;
+                    } else {
+                        return (b.percentage || 0) - (a.percentage || 0);
+                    }
+                });
                 answers.forEach(answer => {
                     let count = countMap.get(answer);
                     let prefix = this.entry.isCumulative ? `<li><span aria-hidden="true">(${count}x)</span><span class="sr-only">${count} mal beantwortet:</span> ` : '';
