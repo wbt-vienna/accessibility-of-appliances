@@ -1,4 +1,5 @@
 import {constants} from "./constants";
+import {util} from "./util";
 
 let entryUtil = {};
 
@@ -102,6 +103,33 @@ entryUtil.isAnswerValid = function (entry, questionId, questions) {
         return true;
     }
     return false;
+};
+
+/**
+ * creates a cumulative entry with average scores from a list of entries
+ * @param entries a list of entries, all with same product id
+ * @return a new entry object with calculates cumulative scores. New properties: isCumulative: true,
+ *         singleEntries: list of original entries the scores were calculated from
+ */
+entryUtil.getCumulativeEntry = function (entries) {
+    entries = entries.filter(e => e.product.id === entries[0].product.id);
+    let newEntry = {
+        isCumulative: true,
+        product: JSON.parse(JSON.stringify(entries[0].product)),
+        category: JSON.parse(JSON.stringify(entries[0].category)),
+        questionCategories: entries.reduce((total, current) => {
+            Object.keys(current.questionCategories).forEach(key => {total[key] = total[key] || current.questionCategories[key]});
+            return total;
+        }, {}),
+        score: util.getAvg(entries.map(e => e.score)),
+        scoresByGroup: {},
+        updatedBy: entries.reduce((total, current) => current.updatedBy ? total + current.updatedBy + ', ' : total, '').slice(0, -2),
+        singleEntries: entries
+    }
+    constants.TARGETGROUPS.forEach(targetGroup => {
+        newEntry.scoresByGroup[targetGroup] = util.getAvg(entries.map(e => e.scoresByGroup[targetGroup]));
+    });
+    return newEntry;
 };
 
 function getWeight(question, targetGroupId) {
