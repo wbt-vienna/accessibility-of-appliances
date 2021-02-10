@@ -54,13 +54,7 @@
                 <div class="col-md-2 mt-2 mt-md-0">
                     <span class="d-md-none table-label" aria-hidden="true">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType) + ':') : 'Gesamtbewertung:'}}</span>
                     <span class="sr-only">{{filterOptions.scoreType ? ('Bewertung für ' + $options.filters.translate(filterOptions.scoreType)) : 'Gesamtbewertung'}}</span>
-                    <div>
-                        <div class="rating-box" aria-hidden="true" :title="(filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)) + '%'">
-                            <div class="rating" :style="'width:' + (filterOptions.scoreType ? entry.scoresByGroup[filterOptions.scoreType] : entry.score) + '%;'"></div>
-                        </div>
-                        <span class="sr-only">{{(filterOptions.scoreType ? Math.round(entry.scoresByGroup[filterOptions.scoreType]) : Math.round(entry.score)) + '%'}}</span>
-                        <span><span class="sr-only">Anzahl der Bewertungen:</span>{{entry.singleEntries ? entry.singleEntries.length : 1}}</span>
-                    </div>
+                    <rating-stars :percentage="filterOptions.scoreType ? entry.scoresByGroup[filterOptions.scoreType] : entry.score" :count="entry.singleEntries ? entry.singleEntries.length : 1"></rating-stars>
                 </div>
                 <div v-if="isLoggedIn || entry.pendingConfirmation || !isLoggedIn" class="col-md-4 mt-2 mt-md-0">
                     <span class="d-md-none mb-1 table-label" aria-hidden="true" for="btngroup">Aktionen: </span>
@@ -91,10 +85,11 @@
     import {util} from "../js/util/util";
     import {databaseService} from "../js/service/data/databaseService";
     import {entryUtil} from "../js/util/entryUtil";
+    import RatingStars from "./ratingStars.vue";
 
     let thiz = null;
     export default {
-        components: {},
+        components: {RatingStars},
         data() {
             return {
                 entries: null,
@@ -266,37 +261,5 @@
 
     .entries .table-label {
         font-weight: bold;
-    }
-
-    /* rating box with fontawesome 5 inspired from - https://stackoverflow.com/a/49343426/6908282
-Whitspace in pseudo elements: https://stackoverflow.com/a/5467676/6908282
-replace "\f111" with \f005 to make it a star */
-
-    .rating-box {
-        position:relative;
-        vertical-align: middle;
-        font-family: FontAwesome;
-        display:inline-block;
-        color: orange;
-    }
-    .rating-box:before{
-        font-family: "Font Awesome 5 Free";
-        /* white-space: pre; */
-        font-weight: 400;
-        content: "\f005 \f005 \f005 \f005 \f005"; /* You can add gap by simply adding more spaces in between or you can use \00a0*/
-    }
-    .rating-box .rating {
-        position: absolute;
-        left:0;
-        top:0;
-        white-space:nowrap;
-        overflow:hidden;
-        color: orange;
-    }
-    .rating-box .rating:before {
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        /* white-space: pre; */
-        content: "\f005 \f005 \f005 \f005 \f005";
     }
 </style>

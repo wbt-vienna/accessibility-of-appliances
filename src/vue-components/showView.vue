@@ -15,12 +15,12 @@
             </div>
             <div class="form-group">
                 <label for="scoreTotal">Aufgrund von Angaben berechnete Gesamtbewertung</label>
-                <div id="scoreTotal">{{Math.round(entry.score)}} %</div>
+                <div id="scoreTotal"><rating-stars :percentage="entry.score"></rating-stars></div>
             </div>
             <div class="form-group">
                 <label for="scoreTargetgroup">Bewertung je Zielgruppe</label>
                 <div id="scoreTargetgroup">
-                    <div v-for="groupId in Object.keys(entry.scoresByGroup)">{{groupId | translate}}: {{Math.round(entry.scoresByGroup[groupId])}} %</div>
+                    <div v-for="groupId in Object.keys(entry.scoresByGroup)">{{groupId | translate}}: <rating-stars :percentage="entry.scoresByGroup[groupId]"></rating-stars></div>
                 </div>
             </div>
             <h3  class="eleven colums mt-4">Allgemeine Informationen</h3>
@@ -91,10 +91,11 @@
     import {constants} from "../js/util/constants";
     import {entryUtil} from "../js/util/entryUtil";
     import {util} from "../js/util/util";
+    import RatingStars from "./ratingStars.vue";
 
     let thiz = null;
     export default {
-        components: {},
+        components: {RatingStars},
         data() {
             return {
                 questions: null,
