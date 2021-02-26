@@ -63,7 +63,7 @@ dataService.remove = function(id) {
 
 dataService.getSearchResults = function (query) {
     return new Promise(resolve => {
-        $.get('https://www.asterics-foundation.org/wbt-proxy/proxy.php', {
+        $.get('https://proxy.asterics-foundation.org/proxy.php', {
             csurl: 'https://geizhals.at/acses',
             lang: 'de',
             loc: 'at',
