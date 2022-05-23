@@ -6,8 +6,8 @@ import LoginView from '../vue-components/loginView.vue'
 import SearchView from '../vue-components/newSearchView.vue'
 import ShowView from "../vue-components/showView.vue"
 import InfoView from "../vue-components/infoView.vue";
-import DiscussionView from "../vue-components/discussionView.vue";
-import DiscussionSingleView from "../vue-components/discussionSingleView.vue";
+// import DiscussionView from "../vue-components/discussionView.vue";
+// import DiscussionSingleView from "../vue-components/discussionSingleView.vue";
 import * as log from 'loglevel';
 import {databaseService} from "./service/data/databaseService";
 import {localStorageService} from "./service/data/localStorageService";
@@ -26,8 +26,8 @@ function init() {
         {path: '/view/:id', component: ShowView},
         {path: '/view/product/:productid', component: ShowView},
         {path: '/info', component: InfoView},
-        {path: '/discussion', component: DiscussionView},
-        {path: '/discussion/:questionid', component: DiscussionSingleView},
+        //    {path: '/discussion', component: DiscussionView},
+        //  {path: '/discussion/:questionid', component: DiscussionSingleView},
         {path: '*', redirect: '/info'}
     ];
 
@@ -78,7 +78,7 @@ function init() {
                     {name: 'Startseite', to: '/info'},
                     {name: 'Geräte', to: '/list'},
                     {name: 'Neu', to: '/new'},
-                    {name: 'Diskussion', to: '/discussion'},
+                    // {name: 'Diskussion', to: '/discussion'},
                     {name: 'Login', to: '/login'},
                 ]
             }
