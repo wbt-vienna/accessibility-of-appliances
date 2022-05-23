@@ -120,8 +120,15 @@
         },
         methods: {
             getTextAnswer(question) {
+                let thiz = this;
                 let text = this.entry.isCumulative ? '<ul>' : '';
-                let answerIds = thiz.entry.isCumulative ? thiz.entry.singleEntries.map(e => e.answers[question.id].answerId) : [thiz.entry.answers[question.id].answerId]
+                let answerIds = null;
+                if (thiz.entry.isCumulative) {
+                    answerIds = thiz.entry.singleEntries.map(e => e.answers[question.id].answerId);
+                } else {
+                    let answer = thiz.entry.answers[question.id];
+                    answerIds = answer ? [thiz.entry.answers[question.id].answerId] : [];
+                }
                 answerIds = answerIds.filter(a => !!a);
                 if (!answerIds[0]) {
                     return "(keine Antwort)"
