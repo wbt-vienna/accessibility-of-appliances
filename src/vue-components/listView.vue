@@ -46,6 +46,7 @@
                     <div class="d-md-none" v-if="entry.pendingConfirmation"><i>nicht verifizierter Eintrag</i></div>
                     <span class="d-md-none table-label" aria-hidden="true">Bezeichnung: </span>
                     <span class="only-screenreader">Bezeichnung</span>
+                    <span class="only-screenreader" v-if="!filterOptions.category">{{entry.category.label}}</span>
                     <div class="d-md-inline-block">
                         <i v-if="entry.pendingConfirmation" class="fas fa-question-circle d-none d-md-inline-block" title="nicht verifizierter Eintrag eines anonymen Users"></i>
                         <a target="_blank" title="externer Link des Geräts auf geizhals.at in neuem Tab" :href="'https://geizhals.at/' + entry.product.id">{{entry.product.label}}</a>
