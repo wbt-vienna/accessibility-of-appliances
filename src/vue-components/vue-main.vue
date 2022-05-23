@@ -6,8 +6,8 @@
                     <a href="https://wbt.wien/" title="Projektseite Wissensdrehscheibe" target="_blank"><img aria-hidden="true" src="app/img/prepart.svg"/></a><a href="." :title="pageName + ' Home'"><img aria-hidden="true" :src="logoPath"/></a>
                 </h1>
                 <div class="col-lg-2 col-sm-3 order-lg-last p-0 d-none d-sm-flex" style="justify-content: flex-end; align-items: center;">
-                    <a href="https://www.technikum-wien.at/" target="_blank">
-                        <img style="min-height: 35px; max-height: 60px; height: 8vw" src="app/img/fhtw.svg"/>
+                    <a href="https://www.technikum-wien.at/" target="_blank" title="FH Technikum Wien">
+                        <img style="min-height: 35px; max-height: 60px; height: 8vw" alt="" src="app/img/fhtw.svg"/>
                     </a>
                 </div>
                 <nav class="col-lg-5 col-sm-12 header-links">
