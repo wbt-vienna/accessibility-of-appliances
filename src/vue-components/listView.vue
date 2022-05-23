@@ -14,7 +14,7 @@
                 <label for="category">Kategorie</label>
                 <select id="category" class="form-control" @change="filterChanged()" v-model="filterOptions.category">
                     <option selected value="">alle Kategorien</option>
-                    <option v-for="categoryId in Object.keys(categories)" :value="categoryId">{{categories[categoryId]}}</option>
+                    <option v-for="categoryId in Object.keys(categories).sort()" :value="categoryId">{{categories[categoryId]}}</option>
                     <option selected value="UNCONFIRMED">nicht verifizierte Einträge</option>
                 </select>
             </div>
