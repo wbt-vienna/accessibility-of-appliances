@@ -168,7 +168,7 @@ function login (user, password) {
         return Promise.resolve();
     }
     _loggedInUser = null;
-    let promise = pouchDbService.initDatabase(user, password, "https://db1.couchdb.asterics-foundation.org/accessibility-for-appliances");
+    let promise = pouchDbService.initDatabase(user, password, "https://db2.couchdb.asterics-foundation.org/accessibility-for-appliances");
     promise.then(() => {
         _loggedInUser = user;
         _successfulUser = user;
